@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dança com cores</title>
+    <link rel="stylesheet" href="css/estilo.css">    
+    <script src="/js/cadastro.js"></script>
+</head>
+<body  style="background-image: url(imagens/back/02.jpg);">
+    <!-- Cabeçalho com menu -->
+    <header>
+        <nav>
+            <div class="logo">
+                <a href="index.html"><img src="imagens/logo.png" alt="Logo Dança com cores"></a>
+            </div>
+            <!-- Menu (links) -->
+            <ul>
+                <li><a href="index.html">Início</a></li>
+                <li><a href="sobre.html">Sobre</a></li>
+                <li><a href="jogo.html">Jogar</a></li>
+                <li><a href="login.html">Login</a></li>
+                
+            </ul>
+            
+            <div class="danca" id="danca-icon">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </nav>
+    </header>
+    <section>
+        <div class="mainQuiz">
+            <h2>Cadastrar</h2>
+        <form  onsubmit="cadastrar(event)">
+            <label for="nome">Nome:</label>
+    <input type="text" id="nome" required><br><br>
+    <label for="email">Email:</label>
+    <input type="email" id="email" required><br><br>
+    <label for="senha">Senha:</label>
+    <input type="password" id="senha" required><br><br>
+    <label for="confirmarSenha">Confirmar Senha:</label>
+    <input type="password" id="confirmarSenha" required><br><br>
+    <button type="submit">Cadastrar</button>
+        </form>
+        <p>Tem cadastro? <a href="login.html">Login</a></p>
+            
+        </div>
+        
+    </main>
+    <!-- Rodapé -->
+    <footer>
+        <span class="logo">
+        <section class="logotipo">
+            <img src="imagens/logo.png" alt="">
+            <h1>DANÇA COM CORES</h1>
+        </section>
+        <span class="direitos">© 2024 DANÇA COM CORES. Todos os direitos reservados.</span>
+    </span>
+
+
+        <div class="vl"></div>
+
+        <section class="infos">
+            <h1>FALE CONOSCO</h1>
+            <p>(11) 3456-7890</p>
+            <p>Rua Haddock Lobo, 595 - São Paulo, SP</p>
+            <a href="mailto:faleconosco@GasBusters.com">faleconosco@DancaComCores.com.br</a>
+
+            <div class="redes">
+                <a href="https://www.linkedin.com/"><i class="fa-brands fa-linkedin" style="color: #ffffff;"></i></a>
+                <a href="https://www.instagram.com/"><i class="fa-brands fa-instagram" style="color: #ffffff;"></i></a>
+                <a href="https://www.facebook.com/"><i class="fa-brands fa-facebook-f" style="color: #ffffff;"></i></a>
+                <a href="https://www.twitter.com/"><i class="fa-brands fa-twitter" style="color: #ffffff;"></i></a>
+            </div>
+        </section>
+    </footer>
+
+    <!-- Script JavaScript -->
+    <script>
+        // Função para alternar a classe 'active' no menu
+        document.getElementById("danca-icon").addEventListener("click", function() {
+            const menu = document.querySelector("nav ul");
+            menu.classList.toggle("active");
+        });
+
+
+    
+    </script>
+</body>
+</html>
+
+
