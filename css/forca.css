@@ -1,0 +1,81 @@
+.container {
+    max-width: 600px;
+    margin: 0 auto;
+    background: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+h1 {
+    color: #333;
+}
+
+#word-display {
+    font-size: 24px;
+    font-weight: bold;
+    margin: 20px 0;
+}
+
+.input-container {
+    margin: 20px 0;
+}
+
+input {
+    padding: 10px;
+    font-size: 16px;
+    width: 50px;
+    text-align: center;
+}
+
+button {
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    background-color: #16406c;
+    color: white;
+    border: none;
+    border-radius: 5px;
+}
+
+button:hover {
+    background-color: chocolate;
+}
+
+.hidden {
+    display: none;
+}
+
+#message {
+    margin-top: 20px;
+    font-weight: bold;
+    font-size: 18px;
+}
+.hidden {
+    display: none;
+}
+
+.start-button {
+    padding: 15px 30px;
+    font-size: 18px;
+    cursor: pointer;
+    background-color: #34495e;
+    color: white;
+    border: none;
+    border-radius: 5px;
+}
+
+.start-button:hover {
+    background-color: chocolate;
+}
+
+.botaohidden{
+    display: flow;    
+    padding-top: 8vw;
+  }
+  .botaohidden button{
+    font-size: 23px;
+    background-color: #16406c;
+    font-weight: bold;
+}
+  

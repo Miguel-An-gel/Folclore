@@ -1,0 +1,103 @@
+
+
+.formQuiz {
+    display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 1rem;
+        margin: 0px;
+        width: 100%;
+        padding: 0px;
+}
+.formQuiz h1{
+    color: chocolate;
+    text-transform: uppercase;
+    margin: 25px;
+}
+
+.mainQuiz {
+    width: 100%;
+    background-color: #16406ccf;
+    color: #ddd;
+    padding-top: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+.question {
+    margin-bottom: 20px;
+    border: 5px solid #16406cc2;
+    background-color: #16406ccf;
+  
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.9);
+    width: 100%;
+    text-align: center;
+    display: block;
+    height: 36vw;
+
+}
+
+.question h2 {
+    color: chocolate;
+}
+
+.question label {
+    color: #ddd;
+    margin: 5px 0; /* Movido para cá */
+}
+
+
+button {
+    background-color: #16406cc2;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.9);
+}
+
+.perguntas{
+    background-color: #16406cc2;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.9);
+    width: 14vw;
+    height: 6vw;
+    margin: 1vw;
+    font-size: 15px;
+    font-weight: bold;
+}
+.perguntas:hover{
+    background-color: chocolate;
+}
+.imagemfoclore{
+    width: 90%;
+    height: 70%;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.9);
+
+
+}
+.imagemfocloreescolhido{
+    width: 35%;
+    height: 90%;
+}
+
+.questoes{
+    margin: 0;
+    background-color: #16406cc2 ;
+}
+
+.main-content{
+    width: 100%;
+    padding: 0;
+    box-sizing: border-box;
+    background-color: #ecf0f1
+}
+.botaoSalvar{
+    background-color: #16406cc2;
+}

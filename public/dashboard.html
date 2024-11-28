@@ -5,6 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Dashboard</title>
   <link rel="stylesheet" href="../css/dash.css">
+  <link rel="stylesheet" href="/css/perguntas.css">
+  <link rel="stylesheet" href="/css/forca.css">
   <script src="/js/dashboard.js" defer></script>
 </head>
 <body>
@@ -13,7 +15,7 @@
     <nav>
       <div class="logo">
         <a href="../index.html">
-          <img src="../imagens/logo.png" alt="Logo Dança com cores">
+          <img src="assets/imagens/logo.png" alt="Logo Dança com cores">
         </a>
       </div>
      
@@ -28,19 +30,27 @@
     <!-- Sidebar -->
      
     <div id="user-info" class="sidebar">
-        <img src="../imagens/perfil/perfil.png" alt="">
+        <img src="/public/assets/imagens/perfil/perfil.png" alt="">
       <h2>Seja Bem-Vindo! <p><strong><span id="user-name"></span></strong> </p></h2> <br>
       <p><strong>Email:</strong> <span id="user-email"></span></p>
-      <p><strong>ID do Usuário:</strong> <span id="user-id"></span></p>
-      
-      
+      <p><strong>ID do Usuário:</strong> <span id="user_id"></span></p>
       <p><strong>Sua dança é :</strong><span id="user-suadanca"></span></p>
+
+    
       
         <br>
         <div class="opcao">
-            <button>Descubra sua Dança</button> <br> <br>
-      <button>Jogue</button> <br> <br>
-      <button>Statistc</button>
+          
+          
+      <button onclick="jogarOsjogos()">Jogue</button> <br> <br>
+      <button onclick="mostrarStatitc()">Statistc</button>
+        
+        </div>
+
+        <div class="botaohidden" id="botoesiniciarlizar">
+     
+          <button hidden id="salvarDancaBtn" class="start-button">Salvar Escolha</button>
+          <button hidden id="start" class="start-button">Iniciar Jogo</button>
         </div>
       
      
@@ -48,6 +58,33 @@
     
     <!-- Main Content -->
     <div class="main-content">
+   
+      <div id="questoes">
+        <div class="mainQuiz">
+          
+            <div id="quizForm" class="formQuiz">
+                <h1>Escolha o Jogo!</h1>
+                <div class="question">
+                  
+ 
+                    <button class="perguntas" onclick="iniciar()">QUAL SEU ESTILO DE DANÇA!</button>
+                    <button class="perguntas" onclick="jogoForca()">VAMOS JOGAR FORCA!</button> <br>
+                    <img class="imagemfoclore" src="assets/imagens/back/iconesfolcloricos.png" alt="">
+                    <br>
+
+
+                </div>
+            </div>
+        </div>
+
+        
+
+    </div>
+
+
+
+<!-- Main Content
+
       <h1>KPIs</h1>
       <div class="kpis">
         <div class="kpi-card">
@@ -64,6 +101,84 @@
         </div>
       </div>
     </div>
-  </div>
+  </div> -->
+
+
 </body>
 </html>
+
+<script>
+
+function mostrarStatitc(){
+
+        questoes.innerHTML = `
+
+     <h1>KPIs</h1>
+      <div class="kpis">
+        <div class="kpi-card">
+          <h3>Meta Mensal</h3>
+          <p>80%</p>
+        </div>
+        <div class="kpi-card">
+          <h3>Faturamento</h3>
+          <p>R$ 50,000</p>
+        </div>
+        <div class="kpi-card">
+          <h3>Novos Clientes</h3>
+          <p>25</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+    `
+ 
+
+
+  }
+
+  function jogarOsjogos(){
+    questoes.innerHTML = `
+      <div class="mainQuiz">
+            <div id="quizForm" class="formQuiz">
+                <h1>Qual dança combina mais com voce ?</h1>
+                <div class="question">
+                    <button class="perguntas" onclick="iniciar()">QUAL SEU ESTILO DE DANÇA!</button>
+                    <button class="perguntas" onclick="jogoForca()">VAMOS JOGAR FORCA!</button> <br>
+                    <img class="imagemfoclore" src="assets/imagens/back/iconesfolcloricos.png" alt="">
+                    <br>
+
+
+                </div>
+            </div>
+        </div>
+     
+        `
+  }
+
+  function jogoForca(){
+    var botao1 = start
+    botao1.hidden = false
+    questoes.innerHTML = `
+<div class="container">
+        <h1>Jogo da Forca</h1>
+        <div id="game-container" class="hidden">
+            <p id="word-display">_ _ _ _ _</p>
+            <p>Dica: <span id="hint">Aqui vai uma dica</span></p>
+            <p>Tentativas restantes: <span id="attempts">6</span></p>
+            <p>Erros: <span id="errors">0</span></p>
+            <p>Tempo: <span id="time">30</span> segundos</p>
+            <p>Pontuação mínima: <span id="min-score">50</span></p>
+            <p>Pontuação atual: <span id="score">0</span></p>
+            <div class="input-container">
+                <input type="text" id="guess" maxlength="1" placeholder="Digite uma letra">
+                <button id="submit">Tentar</button>
+            </div>
+            <div id="message"></div>
+        </div>
+    </div>
+    `
+   
+  }
+</script>

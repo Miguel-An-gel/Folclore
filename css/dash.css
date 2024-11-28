@@ -45,7 +45,7 @@ body {
     background-color: chocolate;
 }
 button {
-    background-color: #16406cc2;
+    background-color: #16406c;
     color: white;
     border: none;
     padding: 10px 20px;
@@ -65,16 +65,17 @@ button {
     flex-direction: column;
   }
   .opcao button:hover {
-    background-color: #1b4a7cc2;
+    background-color: chocolate;
     
   }
   
 .sidebar img{
-    width: 200px;
+  width: 200px;
+  height: 200px;
   }
   .sidebar {
     width: 20%;
-    background-color: #34495e;
+    background-color: #16406c;
     color: white;
     padding: 20px;
     box-sizing: border-box;
@@ -119,7 +120,7 @@ button {
   
   .kpi-card h3 {
     font-size: 18px;
-    color: #34495e;
+    color: #16406c;
   }
   
   .kpi-card p {
@@ -128,3 +129,4 @@ button {
     margin-top: 10px;
   }
   
+

@@ -14,6 +14,10 @@ app.use('/css', express.static(path.join(__dirname, 'css')));
 app.use(cors()); // Habilita CORS
 app.use(express.json()); // Habilita parsing JSON
 
+
+
+
+
 // Conexão com o banco de dados
 const mysql = require('mysql2');
 
@@ -74,6 +78,88 @@ app.post('/login', (req, res) => {
       }
     });
   });
+
+
+
+// Rota para salvar a dança escolhida
+app.post('/salvarDanca', (req, res) => {
+    const { nomedanca, fkusuario } = req.body;
+
+    const sql = 'INSERT INTO minhadanca (nomedanca, fkusuario) VALUES (?, ?)';
+    db.query(sql, [nomedanca, fkusuario], (err, result) => {
+        if (err) {
+            console.error('Erro ao salvar a dança:', err);
+            res.status(500).send('Erro ao salvar a dança');
+        } else {
+            res.send('Dança salva com sucesso!');
+        }
+    });
+});
+
+
+
+// Rota para salvar a dança escolhida
+app.post('/salvarDanca', (req, res) => {
+    const { nomedanca, fkusuario } = req.body;
+
+    const sql = 'INSERT INTO minhadanca (nomedanca, fkusuario) VALUES (?, ?)';
+    db.query(sql, [nomedanca, fkusuario], (err, result) => {
+        if (err) {
+            console.error('Erro ao salvar a dança:', err);
+            res.status(500).send('Erro ao salvar a dança');
+        } else {
+            res.send('Dança salva com sucesso!');
+        }
+    });
+});
+
+
+// Rota para buscar as danças associadas a um usuário
+app.get('/minhasDancas/:idusuario', (req, res) => {
+    const { idusuario } = req.params;
+
+    const sql = `
+        SELECT minhadanca.nomedanca
+        FROM minhadanca
+        WHERE minhadanca.fkusuario = ?`;
+
+    db.query(sql, [idusuario], (err, results) => {
+        if (err) {
+            console.error('Erro ao buscar danças:', err);
+            res.status(500).send('Erro ao buscar danças');
+        } else {
+            res.json(results);
+        }
+    });
+});
+
+/**
+ * 
+ * abaixo jogo forca
+ * 
+ */
+
+
+
+// Rota para salvar os dados do jogo
+app.post('/salvar-jogo', (req, res) => {
+    const { tentativas, erros, tempojogo, fkusuario } = req.body;
+
+    const sql = 'INSERT INTO jogo (tentativas, erros, tempojogo, fkusuario) VALUES (?, ?, ?, ?)';
+    db.query(sql, [tentativas, erros, tempojogo, fkusuario], (err, result) => {
+        if (err) {
+            console.error('Erro ao salvar dados do jogo:', err);
+            res.status(500).send('Erro ao salvar dados do jogo');
+        } else {
+            res.send('Dados do jogo salvos com sucesso!');
+        }
+    });
+});
+
+// Iniciar o servidor
+
+
+
 
 // Inicia o servidor
 const PORT = 3010;

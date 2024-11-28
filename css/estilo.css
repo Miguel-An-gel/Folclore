@@ -10,7 +10,8 @@ body {
     padding: 0;
     line-height: 1.6;
     color: #ededed;
-    background-image: url(/site/imagens/back/02.jpg);
+    background-image: url(/public/assets/imagens/back/02.jpg);
+    background-color: #16406c;
 
 
 }
@@ -18,94 +19,6 @@ body {
 
 
 
-
-.formQuiz {
-    display: flex;
-        flex-wrap: wrap;
-        justify-content: center;
-        gap: 1rem;
-        margin: 0px;
-        width: 100%;
-        padding: 0px;
-}
-.formQuiz h1{
-    color: chocolate;
-    text-transform: uppercase;
-    margin: 25px;
-}
-
-.mainQuiz {
-    width: 80%;
-    margin: 0px auto;
-    background-color: #16406ccf;
-    color: #ddd;
-    padding: 80px 10px 10px 10px;
-    border-radius: 8px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    text-align: center;
-}
-
-.question {
-    margin-bottom: 20px;
-    padding: 20px;
-    border: 5px solid #16406cc2;
-    background-color: #16406ccf;
-  
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.9);
-    width: 100%;
-    text-align: center;
-    display: block;
-
-}
-
-.question h2 {
-    color: chocolate;
-}
-
-.question label {
-    color: #ddd;
-    margin: 5px 0; /* Movido para cá */
-}
-
-
-button {
-    background-color: #16406cc2;
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 5px;
-    cursor: pointer;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.9);
-}
-
-.perguntas{
-    background-color: #16406cc2;
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 5px;
-    cursor: pointer;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.9);
-    width: 14vw;
-    height: 6vw;
-    margin: 1vw;
-    font-size: 15px;
-    font-weight: bold;
-}
-.perguntas:hover{
-    background-color: chocolate;
-}
-.imagemfoclore{
-    width: 90%;
-    height: 70%;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.9);
-
-
-}
-.imagemfocloreescolhido{
-    width: 30%;
-    height: 75%;
-}
 
 button:hover {
     background-color: #3700b3;
@@ -134,24 +47,6 @@ button:hover {
 }
 .mainQuiz a{
     color: chocolate;
-}
-
-.login {
-    width: 80%;
-    margin: 0px auto;
-    background-color: #16406ccf;
-    color: #ddd;
-    padding: 80px 10px 10px 10px;
-    border-radius: 8px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    text-align: center;
-}
-.login label{
-    color: #ddd;
-}
-
-.login h2{
-    color: #ddd;
 }
 
 
@@ -228,7 +123,7 @@ nav ul li a {
     padding: 10px;
 }
 
-/* Estilos para o ícone do hambúrguer */
+/* Estilos para o ícone  */
 .danca {
     display: none;
     cursor: pointer;
@@ -476,62 +371,8 @@ carrosel
 
 
 
-/* Formulários */
-form {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-    margin: 1rem auto;
-    max-width: 500px;
-}
-
-form label {
-    font-size: 1rem;
-    font-weight: bold;
-    color: #16406c;
-}
-
-form input,
-form textarea,
-form button {
-    padding: 0.8rem;
-    font-size: 1rem;
-    border-radius: 5px;
-    border: 1px solid #ddd;
-}
-
-form input:focus,
-form textarea:focus {
-    outline: none;
-    border-color: #16406c;
-}
-
-form button {
-    background: #16406c;
-    color: #fff;
-    border: none;
-    cursor: pointer;
-    font-weight: bold;
-    transition: background 0.3s;
-}
-
-form button:hover {
-    background: chocolate;
-    color: #16406c;
-}
 
 
-
-
-
-a {
-    color: #16406c;
-    text-decoration: none;
-}
-
-a:hover {
-    text-decoration: underline;
-}
 /* INÍCIO CSS FOOTER */
 
 footer {

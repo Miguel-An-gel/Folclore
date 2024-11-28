@@ -1,0 +1,175 @@
+.sectionCad{
+  
+  text-align: center;
+  text-align: center;
+  display: grid
+;
+  max-width: 100%;
+  height: 100%;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+ 
+}
+
+.cadastro{
+  width: 50%;
+  margin: 100px auto;
+  background-color: #12375fcf;
+  color: #ddd;
+  padding: 50px 10px 10px 10px;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  text-align: center;
+ 
+  position: relative;
+}
+
+.cadastro label{
+  color: #ddd;
+}
+
+.cadastro h2{
+  color: #ddd;
+}
+
+
+
+
+.form {
+  --bg-light: #efefef;
+  --bg-dark: #707070;
+  --clr: chocolate;
+  --clr-alpha: #fff;
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+  width: 100%;
+  max-width: 300px;
+}
+
+.form .input-span {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+
+}
+
+.form input[type="text"],
+.form input[type="email"],
+.form input[type="password"] {
+  border-radius: 0.5rem;
+  padding: 1rem 0.75rem;
+  width: 100%;
+  border: none;
+  display: flex;
+  align-items: center;
+
+  background-color: var(--clr-alpha);
+  outline: 2px solid var(--bg-dark);
+}
+
+.form input[type="text"]:focus,
+.form input[type="email"]:focus,
+.form input[type="password"]:focus {
+  outline: 2px solid var(--clr);
+}
+
+.label {
+  align-self: flex-start;
+  color: var(--clr);
+  font-weight: 600;
+}
+
+.form .submit {
+  padding: 1rem 0.75rem;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  border-radius: 3rem;
+  background-color: var(--bg-dark);
+  color: var(--bg-light);
+  border: none;
+  cursor: pointer;
+  transition: all 300ms;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.form .submit:hover {
+  background-color: var(--clr);
+  color: var(--bg-dark);
+}
+
+.span {
+  text-decoration: none;
+  color: var(--bg-dark);
+}
+
+.span a {
+  color: var(--clr);
+}
+
+/* Formulários */
+form {
+  display: flex;
+  flex-direction: column;
+
+  margin: 1rem auto;
+  max-width: 500px;
+}
+
+form label {
+  font-size: 1rem;
+  font-weight: bold;
+  color: #16406c;
+}
+
+form input,
+form textarea,
+form button {
+  padding: 0.8rem;
+  font-size: 1rem;
+  border-radius: 5px;
+  border: 1px solid #ddd;
+}
+
+form input:focus,
+form textarea:focus {
+  outline: none;
+  border-color: #16406c;
+}
+
+form button {
+  background: #16406c;
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background 0.3s;
+  width: 100%;
+}
+
+form button:hover {
+  background: chocolate;
+  color: #16406c;
+}
+
+.login p{
+  font-size: 20px;
+}
+a {
+ 
+  color: chocolate;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+.title {
+  text-align: center;
+  font-size: 1.5rem;
+  line-height: 2rem;
+  font-weight: 700;
+}
