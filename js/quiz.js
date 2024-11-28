@@ -1,9 +1,9 @@
 // Dados do quiz
 const questions = [
-    { question: "A Terra é plana?", answer: false },
-    { question: "2 + 2 é igual a 4?", answer: true },
-    { question: "O sol é uma estrela?", answer: true },
-    { question: "JavaScript é a mesma coisa que Java?", answer: false }
+    { question: "Caporal é brasileiro?", answer: false },
+    { question: "caporal usa cascaveis?", answer: true },
+    { question: "Tinku é de potosi?", answer: true },
+    { question: "Diablada é o diabo?", answer: false }
 ];
 
 // Variáveis globais
@@ -138,6 +138,53 @@ function salvarQuiz(correct, incorrect, mostCorrect, mostIncorrect, responseTime
             console.error("Erro ao salvar os dados:", error);
         });
 }
+// Função para mostrar os KPIs na dashboard
+// Adicionar evento ao botão
+document.addEventListener("DOMContentLoaded", () => {
+    const fkUsuario = 1; // Substitua com o ID do usuário logado
+    const loadDataButton = document.getElementById("load-data-btn");
+
+    loadDataButton.addEventListener("click", () => {
+        mostrarDashboard(fkUsuario);
+    });
+function mostrarDashboard(fkUsuario) {
+    fetch(`/api/quiz/${fkUsuario}`)
+        .then((response) => {
+            if (!response.ok) {
+                throw new Error("Erro ao buscar os dados.");
+            }
+            return response.json();
+        })
+        .then((data) => {
+            if (data.length === 0) {
+                alert("Nenhum dado encontrado para este usuário.");
+                return;
+            }
+
+            // KPIs
+            const totalCorrect = data.reduce((sum, item) => sum + item.respostas_certas, 0);
+            const totalIncorrect = data.reduce((sum, item) => sum + item.respostas_erradas, 0);
+            const averageTime = data
+                .reduce((sum, item) => sum + JSON.parse(item.tempos_resposta).reduce((a, b) => a + b, 0), 0) /
+                data.reduce((sum, item) => sum + JSON.parse(item.tempos_resposta).length, 0);
+
+            // Atualizar elementos da página
+            document.getElementById("correct-answers").textContent = totalCorrect;
+            document.getElementById("incorrect-answers").textContent = totalIncorrect;
+            document.getElementById("average-time").textContent = averageTime.toFixed(2);
+
+            // Mostrar a dashboard
+            document.getElementById("dashboard").classList.remove("hidden");
+        })
+        .catch((error) => {
+            console.error("Erro ao buscar os dados:", error);
+            alert("Não foi possível carregar os dados.");
+        });
+}
+
+
+});
+
 
 // Eventos de resposta
 trueButton.addEventListener("click", () => answerQuestion(true));

@@ -1,8 +1,13 @@
+drop database dancacomcores;
+
 create database dancacomcores;
 use dancacomcores;
 
 CREATE USER 'danca'@'localhost' IDENTIFIED BY 'stepup';
 GRANT ALL PRIVILEGES ON dancacomcores.* TO 'danca'@'localhost';
+FLUSH PRIVILEGES;
+
+ALTER USER 'danca'@'localhost' IDENTIFIED WITH mysql_native_password BY 'stepup';
 FLUSH PRIVILEGES;
 
 
@@ -29,4 +34,28 @@ fkusuario	int,
 foreign key (fkusuario) references usuario(idusuario)
 );
 
-select * from usuario;
+create table quiz(
+idquiz	int primary key auto_increment,
+respostas_certas	varchar(255),
+respostas_erradas varchar(255),
+pergunta_mais_certa varchar(255),
+ pergunta_mais_errada varchar(255),
+ tempos_resposta int,
+ fk_usuario		int,
+ foreign key (fk_usuario) references usuario(idusuario)
+);
+
+CREATE TABLE quiz (
+    idquiz INT AUTO_INCREMENT PRIMARY KEY,
+    respostas_certas INT,
+    respostas_erradas INT,
+    pergunta_mais_certa VARCHAR(255),
+    pergunta_mais_errada VARCHAR(255),
+    tempos_resposta JSON,
+    fk_usuario INT,
+    FOREIGN KEY (fk_usuario) REFERENCES usuario(idusuario)
+);
+
+
+select * from quiz;
+

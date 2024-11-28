@@ -189,6 +189,28 @@ app.post("/api/quiz", (req, res) => {
 });
 
 
+// Endpoint para buscar os dados do quiz para um usuário específico
+app.get("/api/quiz/:fkUsuario", (req, res) => {
+  const fkUsuario = req.params.fkUsuario;
+
+  const query = `
+      SELECT respostas_certas, respostas_erradas, tempos_resposta
+      FROM quiz
+      WHERE fk_usuario = ?
+  `;
+
+  connection.query(query, [fkUsuario], (err, results) => {
+      if (err) {
+          console.error("Erro ao buscar os dados:", err);
+          res.status(500).send("Erro no servidor");
+          return;
+      }
+
+      res.json(results);
+  });
+});
+
+
 // Iniciar o servidor
 
 
