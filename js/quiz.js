@@ -25,6 +25,7 @@ const correctCountElement = document.getElementById("correct-count");
 const incorrectCountElement = document.getElementById("incorrect-count");
 const mostCorrectElement = document.getElementById("most-correct");
 const mostIncorrectElement = document.getElementById("most-incorrect");
+const responseTimesElement = document.getElementById("response-times");
 
 // Iniciar o quiz
 startButton.addEventListener("click", startQuiz);
@@ -70,7 +71,10 @@ function answerQuestion(isTrue) {
         answerStats[currentIndex].incorrect++;
     }
 
-    questionTimes.push((endTime - startTime) / 1000);
+    // Calcular tempo de resposta em segundos
+    const responseTime = ((endTime - startTime) / 1000).toFixed(2);
+    questionTimes.push({ question: currentQuestion.question, time: responseTime });
+
     currentIndex++;
     loadQuestion();
 }
@@ -93,7 +97,46 @@ function endQuiz() {
     mostCorrectElement.textContent = questions[mostCorrectIndex]?.question || "Nenhuma";
     mostIncorrectElement.textContent = questions[mostIncorrectIndex]?.question || "Nenhuma";
 
-    console.log("Tempos de resposta:", questionTimes);
+    // Mostrar os tempos de resposta
+    responseTimesElement.innerHTML = questionTimes
+        .map(item => `<li>${item.question}: ${item.time}s</li>`)
+        .join("");
+
+    // Salvar os dados no banco de dados
+    salvarQuiz(correctCount, incorrectCount, mostCorrectElement.textContent, mostIncorrectElement.textContent, questionTimes);
+}
+
+// Salvar os dados no banco de dados
+function salvarQuiz(correct, incorrect, mostCorrect, mostIncorrect, responseTimes) {
+    const fkUsuario = 1; // Substitua pelo ID do usuário logado.
+    const payload = {
+        correct,
+        incorrect,
+        mostCorrect,
+        mostIncorrect,
+        responseTimes,
+        fkUsuario,
+    };
+
+    fetch("/api/quiz", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
+    })
+        .then((response) => {
+            if (!response.ok) {
+                throw new Error("Erro ao salvar os dados.");
+            }
+            return response.json();
+        })
+        .then((data) => {
+            console.log("Dados salvos com sucesso:", data);
+        })
+        .catch((error) => {
+            console.error("Erro ao salvar os dados:", error);
+        });
 }
 
 // Eventos de resposta

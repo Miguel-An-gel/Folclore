@@ -10,6 +10,10 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/js', express.static(path.join(__dirname, 'js')));
 app.use('/css', express.static(path.join(__dirname, 'css')));
 
+// Servir arquivos estáticos (HTML, CSS, JS)
+
+
+
 // Configuração do middleware
 app.use(cors()); // Habilita CORS
 app.use(express.json()); // Habilita parsing JSON
@@ -155,6 +159,35 @@ app.post('/salvar-jogo', (req, res) => {
         }
     });
 });
+
+
+
+
+// quizz
+
+// Endpoint para salvar os dados do quiz
+app.post("/api/quiz", (req, res) => {
+    const { correct, incorrect, mostCorrect, mostIncorrect, responseTimes, fkUsuario } = req.body;
+
+    const query = `
+        INSERT INTO quiz (respostas_certas, respostas_erradas, pergunta_mais_certa, pergunta_mais_errada, tempos_resposta, fk_usuario)
+        VALUES (?, ?, ?, ?, ?, ?)
+    `;
+
+    db.query(
+        query,
+        [correct, incorrect, mostCorrect, mostIncorrect, JSON.stringify(responseTimes), fkUsuario],
+        (err) => {
+            if (err) {
+                console.error("Erro ao inserir no banco:", err);
+                res.status(500).json({ message: "Erro ao salvar os dados." });
+            } else {
+                res.status(200).json({ message: "Dados salvos com sucesso!" });
+            }
+        }
+    );
+});
+
 
 // Iniciar o servidor
 
