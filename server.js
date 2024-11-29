@@ -21,7 +21,6 @@ app.use(express.json()); // Habilita parsing JSON
 
 
 
-
 // Conexão com o banco de dados
 const mysql = require('mysql2');
 
@@ -76,6 +75,7 @@ app.post('/login', (req, res) => {
       if (results.length > 0) {
         // Usuário encontrado
         res.json(results[0]);
+      
       } else {
         // Usuário não encontrado
         res.status(401).send('Credenciais inválidas');
@@ -234,6 +234,7 @@ app.post("/salvar-resposta", (req, res) => {
 
 
 
+
 app.get("/respostas-usuarios", (req, res) => {
   const query = `
       SELECT 
@@ -263,39 +264,39 @@ app.get("/respostas-usuarios", (req, res) => {
 
 
 
+
+
 app.get("/respostas-usuario", (req, res) => {
-
-  const query = `
-      SELECT 
-    usuario.nome AS usuario,
-    usuario.email AS email,
-    Respostas.pergunta AS pergunta,
-    Respostas.resposta_correta AS resposta_correta,
-    Respostas.resposta_usuario AS resposta_usuario,
-    Respostas.correta AS acertou,
-    Respostas.tempo AS tempo_resposta
-FROM 
-    usuario
-JOIN 
-    Respostas ON usuario.idusuario = Respostas.fkusuario
-WHERE 
-    Respostas.fkusuario = 3;
-  `;
-
-  db.query(query, (err, results) => {
-      if (err) {
-          console.error("Erro ao buscar respostas dos usuários:", err);
-          res.status(500).send("Erro ao buscar dados.");
-      } else {
-          console.log("Resultados da consulta:", results); // Loga os dados
-          res.json(results);
-      }
+   
+    const query = `
+        SELECT 
+          usuario.nome AS usuario,
+          usuario.email AS email,
+          Respostas.pergunta AS pergunta,
+          Respostas.resposta_correta AS resposta_correta,
+          Respostas.resposta_usuario AS resposta_usuario,
+          Respostas.correta AS acertou,
+          Respostas.tempo AS tempo_resposta
+        FROM 
+          usuario
+        JOIN 
+          Respostas ON usuario.idusuario = Respostas.fkusuario
+        WHERE 
+          Respostas.fkusuario = 6;
+    `;
+     
+    db.query(query, (err, results) => {
+        if (err) {
+            console.error("Erro ao buscar respostas dos usuários:", err);
+            res.status(500).send("Erro ao buscar dados.");
+        } else {
+            console.log("Resultados da consulta:", results); // Loga os dados
+            res.json(results);
+        }
+    });
   });
-});
 
 
-
-// Iniciar o servidor
 
 
 
