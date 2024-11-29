@@ -7,7 +7,44 @@
   <link rel="stylesheet" href="../css/dash.css">
   <link rel="stylesheet" href="/css/perguntas.css">
   <link rel="stylesheet" href="/css/forca.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="/js/dashboard.js" defer></script>
+
+  <style>
+     #dashboard {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            width: 80%;
+            margin: auto;
+        }
+
+        canvas {
+            margin: 20px auto;
+            max-width: 600px;
+        }
+
+
+#dashboard2 {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    width: 80%;
+    margin: auto;
+}
+
+canvas {
+    margin: 20px auto;
+    max-width: 600px;
+}
+
+  </style>
 </head>
 <body>
   <!-- Header -->
@@ -30,11 +67,11 @@
     <!-- Sidebar -->
      
     <div id="user-info" class="sidebar">
-        <img src="/public/assets/imagens/perfil/perfil.png" alt="">
+        <img src="assets/imagens/perfil/perfil.png" alt="">
       <h2>Seja Bem-Vindo! <p><strong><span id="user-name"></span></strong> </p></h2> <br>
-      <p><strong>Email:</strong> <span id="user-email"></span></p>
-      <p><strong>ID do Usuário:</strong> <span id="user_id"></span></p>
-      <p><strong>Sua dança é :</strong><span id="user-suadanca"></span></p>
+      <p hidden><strong>Email:</strong> <span id="user-email"></span></p>
+      <p hidden><strong>ID do Usuário:</strong> <span id="user_id"></span></p>
+      <p><strong>Sua dança é : <span id="user-suadanca"></span></strong></p>
 
     
       
@@ -42,8 +79,10 @@
         <div class="opcao">
           
           
-      <button onclick="jogarOsjogos()">Jogue</button> <br> <br>
-      <button onclick="mostrarStatitc()">Statistc</button>
+            <a href="dashboard.html"><button>JOGUE</button> </a><br> <br>
+              
+            <a href="dahsstatiticas.html"><button>GRAFICO</button> </a>
+      
         
         </div>
 
@@ -65,10 +104,12 @@
             <div id="quizForm" class="formQuiz">
                 <h1>Escolha o Jogo!</h1>
                 <div class="question">
-                  
+                
+            
  
-                    <button class="perguntas" onclick="iniciar()">QUAL SEU ESTILO DE DANÇA!</button>
-                    <button class="perguntas" onclick="jogoForca()">VAMOS JOGAR FORCA!</button> <br>
+                    <button class="perguntas" onclick="iniciar()">QUAL SEU ESTILO DE DANÇA?</button>
+                    <a href="dashperguntas.html"><button class="perguntas">VAMOS DE QUIZ?</button></a> <br>
+                    
                     <img class="imagemfoclore" src="assets/imagens/back/iconesfolcloricos.png" alt="">
                     <br>
 
@@ -109,31 +150,176 @@
 
 <script>
 
+document.addEventListener("DOMContentLoaded", () => {
+    fetch("http://localhost:3010/respostas-usuarios")
+        .then((response) => response.json())
+        .then((data) => {
+            const correctIncorrectData = {
+                correct: 0,
+                incorrect: 0
+            };
+
+            const times = [];
+
+            data.forEach((item) => {
+                if (item.acertou) {
+                    correctIncorrectData.correct++;
+                } else {
+                    correctIncorrectData.incorrect++;
+                }
+                times.push(parseFloat(item.tempo_resposta));
+            });
+
+            const averageTime = times.reduce((a, b) => a + b, 0) / times.length;
+
+            // Gráfico de Respostas Corretas e Incorretas
+            new Chart(document.getElementById("correctIncorrectChart"), {
+                type: "pie",
+                data: {
+                    labels: ["Corretas", "Incorretas"],
+                    datasets: [{
+                        data: [correctIncorrectData.correct, correctIncorrectData.incorrect],
+                        backgroundColor: ["#28a745", "#dc3545"],
+                        borderColor: ["#ffffff", "#ffffff"],
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                            labels: {
+                                font: {
+                                    size: 14
+                                },
+                                color: '#333'
+                            }
+                        },
+                        title: {
+                            display: true,
+                            text: 'Distribuição de Respostas Corretas e Incorretas',
+                            font: {
+                                size: 18
+                            },
+                            color: '#333'
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function (tooltipItem) {
+                                    const label = tooltipItem.label;
+                                    const value = tooltipItem.raw;
+                                    return `${label}: ${value}`;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Gráfico de Tempo Médio de Resposta
+            new Chart(document.getElementById("averageTimeChart"), {
+                type: "bar",
+                data: {
+                    labels: ["Tempo Médio de Resposta"],
+                    datasets: [{
+                        label: 'Segundos',
+                        data: [averageTime],
+                        backgroundColor: ["#007bff"],
+                        borderColor: ["#007bff"],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            display: true,
+                            labels: {
+                                font: {
+                                    size: 14
+                                },
+                                color: '#333'
+                            }
+                        },
+                        title: {
+                            display: true,
+                            text: 'Tempo Médio de Resposta',
+                            font: {
+                                size: 18
+                            },
+                            color: '#333'
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function (tooltipItem) {
+                                    const value = tooltipItem.raw;
+                                    return `Tempo Médio: ${value.toFixed(2)} segundos`;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                font: {
+                                    size: 14
+                                },
+                                color: '#333'
+                            },
+                            title: {
+                                display: true,
+                                text: 'Segundos',
+                                font: {
+                                    size: 16
+                                },
+                                color: '#333'
+                            }
+                        }
+                    }
+                }
+            });
+        })
+        .catch((error) => console.error("Erro ao buscar dados:", error));
+});
+
+
+
 function mostrarStatitc(){
 
         questoes.innerHTML = `
 
-     <h1>KPIs</h1>
-      <div class="kpis">
-        <div class="kpi-card">
-          <h3>Meta Mensal</h3>
-          <p>80%</p>
-        </div>
-        <div class="kpi-card">
-          <h3>Faturamento</h3>
-          <p>R$ 50,000</p>
-        </div>
-        <div class="kpi-card">
-          <h3>Novos Clientes</h3>
-          <p>25</p>
-        </div>
-      </div>
-    </div>
-  </div>
+ 
 
+
+
+    
+    
+    <div id="dashboard">
+        <h1>Dashboard de Resultados</h1>
+        <div>
+            <canvas id="correctIncorrectChart"></canvas>
+        </div>
+        <div>
+            <canvas id="averageTimeChart"></canvas>
+        </div>
+    </div>
+
+    <div id="dashboard2">
+        <h1>Dashboard de Resultados2</h1>
+        <div> <canvas id="mostCorrectChart"></canvas> </div>
+        <div> <canvas id="mostIncorrectChart"></canvas> </div>
+    </div>
 
     `
- 
+ /*
+ codigo que tras as estatisticas da tabela usando o chartjs
+ */
+
+        // Faz a requisição para o backend ao carregar a página
+       
+
 
 
   }
@@ -180,5 +366,23 @@ function mostrarStatitc(){
     </div>
     `
    
+  }
+
+  function jogoDoQuiz(){
+    questoes.innerHTML = `
+    <h1>Quiz de Alternativas</h1>
+    <div id="quiz-container">
+        <div class="question">
+            <p id="question-text"></p>
+        </div>
+        <div class="options">
+            <button onclick="selectAnswer(0)">A</button>
+            <button onclick="selectAnswer(1)">B</button>
+            <button onclick="selectAnswer(2)">C</button>
+            <button onclick="selectAnswer(3)">D</button>
+        </div>
+    </div>
+    <div class="results" id="results"></div>
+    `
   }
 </script>

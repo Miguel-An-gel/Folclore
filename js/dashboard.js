@@ -1,4 +1,5 @@
 
+let idGlobalUsuario;
 
 document.addEventListener('DOMContentLoaded', () => {
   // Recupera os dados do usuário do localStorage
@@ -18,6 +19,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // ID do usuário
   var idDoUsuario = usuario.idusuario;
+
+  idGlobalUsuario = usuario.idusuario; // deixando global
 
 
 
@@ -78,6 +81,7 @@ document.addEventListener('DOMContentLoaded', () => {
       });
   }
 });
+
 
 
 function logout() {
@@ -416,6 +420,265 @@ function palavraQueMaisRepete(dancas) {
     return maisRepetidas
 }
 
+/**
+ Jogo de perguntas e respostas
+ */
+
+  // Perguntas e respostas
+  const questions = [
+    {
+        question: "Qual é a capital da Bolívia?",
+        options: ["La Paz", "Quito", "Lima", "Buenos Aires"],
+        correct: 0
+    },
+    {
+        question: "Qual é a dança mais famosa do folclore boliviano?",
+        options: ["Caporales", "Samba", "Flamenco", "Tango"],
+        correct: 0
+    },
+    {
+        question: "Qual é a moeda oficial da Bolívia?",
+        options: ["Peso", "Dólar", "Boliviano", "Euro"],
+        correct: 2
+    }
+];
+
+// Armazena resultados
+const results = [];
+
+// Estado do jogo
+let currentQuestionIndex = 0;
+let startTime;
+
+// Carrega a primeira pergunta
+function loadQuestion() {
+    const question = questions[currentQuestionIndex];
+    document.getElementById('question-text').innerText = question.question;
+
+    const buttons = document.querySelectorAll('.options button');
+    question.options.forEach((option, index) => {
+        buttons[index].innerText = option;
+    });
+
+    startTime = new Date().getTime(); // Marca o tempo de início
+}
+
+// Lida com a resposta do usuário
+function selectAnswer(selectedIndex) {
+    const question = questions[currentQuestionIndex];
+    const endTime = new Date().getTime(); // Marca o tempo de término
+    const timeTaken = (endTime - startTime) / 1000; // Tempo em segundos
+
+    results.push({
+        question: question.question,
+        correctAnswer: question.options[question.correct],
+        userAnswer: question.options[selectedIndex],
+        isCorrect: selectedIndex === question.correct,
+        timeTaken
+    });
+
+    currentQuestionIndex++;
+
+    if (currentQuestionIndex < questions.length) {
+        loadQuestion();
+    } else {
+        showResults();
+    }
+}
+
+// Exibe os resultados
+function saveToDatabase(data) {
+    fetch("http://localhost:3010/salvar-resposta", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+    })
+        .then((response) => {
+            if (!response.ok) {
+                console.error("Erro ao salvar dados no banco.");
+            }
+        })
+        .catch((error) => console.error("Erro na comunicação com o servidor:", error));
+}
+
+// Exibe os resultados e envia para o banco
+function showResults() {
+    const resultsDiv = document.getElementById("results");
+    resultsDiv.innerHTML = "<h2>Resultados:</h2>";
+
+    results.forEach((result, index) => {
+        resultsDiv.innerHTML += `
+    <p><strong>Pergunta ${index + 1}:</strong> ${result.question}</p>
+    <p><strong>Resposta Correta:</strong> ${result.correctAnswer}</p>
+    <p><strong>Resposta Dada:</strong> ${result.userAnswer}</p>
+    <p><strong>Tempo:</strong> ${result.timeTaken.toFixed(2)} segundos</p>
+    <hr>
+`;
+
+        // Adicione o idUsuario ao objeto enviado
+        saveToDatabase({
+            pergunta: result.question,
+            resposta_correta: result.correctAnswer,
+            resposta_usuario: result.userAnswer,
+            correta: result.isCorrect,
+            tempo: result.timeTaken,
+            fkusuario: idGlobalUsuario, // Aqui o idUsuario é enviado
+        });
+    });
+
+    document.getElementById("quiz-container").style.display = "none";
+}
+
+// Certifique-se de que idUsuario está definido corretamente
+//var idUsuario = 1;
+
+// Inicializa o quiz
+//loadQuestion();
+
+
+/**
+ * 
+ * Busca a as respostas certas e coirretas do usuario logado
+ */
+document.addEventListener("DOMContentLoaded", () => {
+    fetch("http://localhost:3010/respostas-usuarios")
+        .then((response) => response.json())
+        .then((data) => {
+            const correctIncorrectData = {
+                correct: 0,
+                incorrect: 0
+            };
+
+            const times = [];
+
+            data.forEach((item) => {
+                if (item.acertou) {
+                    correctIncorrectData.correct++;
+                } else {
+                    correctIncorrectData.incorrect++;
+                }
+                times.push(parseFloat(item.tempo_resposta));
+            });
+
+            const averageTime = times.reduce((a, b) => a + b, 0) / times.length;
+
+            // Gráfico de Respostas Corretas e Incorretas
+            new Chart(document.getElementById("correctIncorrectChart"), {
+                type: "pie",
+                data: {
+                    labels: ["Corretas", "Incorretas"],
+                    datasets: [{
+                        data: [correctIncorrectData.correct, correctIncorrectData.incorrect],
+                        backgroundColor: ["#28a745", "#dc3545"],
+                        borderColor: ["#ffffff", "#ffffff"],
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                            labels: {
+                                font: {
+                                    size: 14
+                                },
+                                color: '#333'
+                            }
+                        },
+                        title: {
+                            display: true,
+                            text: 'Distribuição de Respostas Corretas e Incorretas',
+                            font: {
+                                size: 18
+                            },
+                            color: '#333'
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function (tooltipItem) {
+                                    const label = tooltipItem.label;
+                                    const value = tooltipItem.raw;
+                                    return `${label}: ${value}`;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Gráfico de Tempo Médio de Resposta
+            new Chart(document.getElementById("averageTimeChart"), {
+                type: "bar",
+                data: {
+                    labels: ["Tempo Médio de Resposta"],
+                    datasets: [{
+                        label: 'Segundos',
+                        data: [averageTime],
+                        backgroundColor: ["#007bff"],
+                        borderColor: ["#007bff"],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            display: true,
+                            labels: {
+                                font: {
+                                    size: 14
+                                },
+                                color: '#333'
+                            }
+                        },
+                        title: {
+                            display: true,
+                            text: 'Tempo Médio de Resposta',
+                            font: {
+                                size: 18
+                            },
+                            color: '#333'
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function (tooltipItem) {
+                                    const value = tooltipItem.raw;
+                                    return `Tempo Médio: ${value.toFixed(2)} segundos`;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                font: {
+                                    size: 14
+                                },
+                                color: '#333'
+                            },
+                            title: {
+                                display: true,
+                                text: 'Segundos',
+                                font: {
+                                    size: 16
+                                },
+                                color: '#333'
+                            }
+                        }
+                    }
+                }
+            });
+        })
+        .catch((error) => console.error("Erro ao buscar dados:", error));
+});
+
+
+
+
 
 /**
  * 
@@ -427,7 +690,7 @@ function palavraQueMaisRepete(dancas) {
 
 
     // Função salvarJogo agora usa idDoUsuario diretamente
-
+/*
 
 let currentIndex = 0;
 let currentWord = "";
@@ -567,4 +830,4 @@ document.addEventListener("DOMContentLoaded", () => {
 function destivarbotaoforca(){
     var botao = start
     botao.hidden = true
-}
+}*/

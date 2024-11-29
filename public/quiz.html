@@ -3,41 +3,46 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quiz Certo e Errado</title>
+    <title>Quiz</title>
     <link rel="stylesheet" href="/css/quiz.css">
-   
+   <style>
+     
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .question {
+            margin-bottom: 20px;
+        }
+        .options button {
+            display: block;
+            margin: 5px 0;
+            padding: 10px;
+            width: 100%;
+        }
+        .results {
+            margin-top: 20px;
+        }
+    
+   </style>
 </head>
 <body>
+    <h1>Quiz de Alternativas</h1>
     <div id="quiz-container">
-        <h1>Quiz Certo ou Errado</h1>
-        <div id="question-container">
-            <p id="question"></p>
-            <button id="true-button">Certo</button>
-            <button id="false-button">Errado</button>
+        <div class="question">
+            <p id="question-text"></p>
         </div>
-        <div id="kpi-container" class="hidden">
-            <h2>Resultados</h2>
-            <p>Total Certas: <span id="correct-count"></span></p>
-            <p>Total Erradas: <span id="incorrect-count"></span></p>
-            <p>Pergunta Mais Certas: <span id="most-correct"></span></p>
-            <p>Pergunta Mais Erradas: <span id="most-incorrect"></span></p>
-            <h3>Tempos de Resposta:</h3>
-            <ul id="response-times"></ul>
+        <div class="options">
+            <button onclick="selectAnswer(0)">A</button>
+            <button onclick="selectAnswer(1)">B</button>
+            <button onclick="selectAnswer(2)">C</button>
+            <button onclick="selectAnswer(3)">D</button>
         </div>
-
-        <div id="dashboard" >
-            <h2>Dashboard</h2>
-            <button id="load-data-btn">Carregar Dados</button>
-            <div>
-                <p>Respostas Certas: <span id="correct-answers">0</span></p>
-                <p>Respostas Erradas: <span id="incorrect-answers">0</span></p>
-                <p>Tempo Médio por Resposta: <span id="average-time">-</span> segundos</p>
-            </div>
-        </div>
-        
-        
-        <button id="start-button">Iniciar Quiz</button>
     </div>
- <script src="/js/quiz.js"></script>
+    <div class="results" id="results"></div>
+    
+
 </body>
 </html>
+
+

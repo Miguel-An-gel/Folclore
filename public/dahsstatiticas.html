@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <link rel="stylesheet" href="../css/dash.css">
+    <link rel="stylesheet" href="/css/perguntas.css">
+    <link rel="stylesheet" href="/css/forca.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="/server.js"></script>
+    
+
+
+    <style>
+        #questoes{
+            display: flex;
+            justify-content: space-around;
+        }
+        #dashboard {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            width: 40%;
+            margin: 0;
+        }
+
+    
+        #dashboard2 {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            width: 40%;
+            margin: 0;
+        }
+
+        canvas {
+            margin: 20px auto;
+            
+            font-family: Arial, sans-serif;
+    text-align: center;
+    aspect-ratio: auto 1000 / 500;
+    
+    display: block;
+    box-sizing: border-box;
+    height: 250px;
+    width: 400px;
+        }
+
+        #mostCorrectChart{
+            display: block;
+    box-sizing: border-box;
+    height: 401px;
+    width: 503px;
+   
+        }
+        #mostIncorrectChart{
+            display: block;
+    box-sizing: border-box;
+    height: 401px;
+    width: 503px;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Header -->
+    <header>
+        <nav>
+            <div class="logo">
+                <a href="../index.html">
+                    <img src="assets/imagens/logo.png" alt="Logo Dança com cores">
+                </a>
+            </div>
+
+            <!-- Dance Icon -->
+            <div class="danca" id="danca-icon">
+                <button onclick="logout()"><a>Sair</a></button>
+            </div>
+        </nav>
+    </header>
+
+    <div class="dashboard">
+        <!-- Sidebar -->
+
+        <div id="user-info" class="sidebar">
+            <img src="assets/imagens/perfil/perfil.png" alt="">
+            <h2>Seja Bem-Vindo! <p><strong><span id="user-name"></span></strong> </p>
+            </h2> <br>
+            <p hidden><strong>Email:</strong> <span id="user-email"></span></p>
+            <p hidden><strong>ID do Usuário:</strong> <span id="user_id"></span></p>
+            <p><strong>Sua dança é : <span id="user-suadanca"></span></strong></p>
+
+
+
+            <br>
+            <div class="opcao">
+
+<br>
+<a href="dashboard.html"><button>JOGUE</button> </a><br> <br>
+              
+                <a href="dahsstatiticas.html"><button>GRAFICO</button> </a>
+
+            </div>
+
+
+
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+
+            <div  id="questoes">
+
+                
+                
+                <div id="dashboard">
+                    <h1>SEU GRAFICO</h1>
+                    <div>
+                        <canvas  id="correctIncorrectChart"></canvas>
+                    </div>
+                    <div>
+                        <canvas id="averageTimeChart"></canvas>
+                    </div>
+                </div>
+                <div id="dashboard2">
+                    <h1>GRAFICO GERAL</h1>
+                    <div> <canvas id="mostCorrectChart"></canvas> </div>
+                    <div> <canvas id="mostIncorrectChart"></canvas> </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+
+
+
+</body>
+
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+
+    /*
+    globall
+    */
+
+    
+let idGlobalUsuario2;
+
+document.addEventListener('DOMContentLoaded', () => {
+  // Recupera os dados do usuário do localStorage
+  const usuario = JSON.parse(localStorage.getItem('usuario'));
+
+  // Verifica se o usuário está logado
+  if (!usuario) {
+      alert('Você precisa fazer login!');
+      window.location.href = '/login.html';  // Redireciona para login caso não haja usuário no localStorage
+      return;
+  }
+
+  // Preenche os campos com os dados do usuário
+  document.getElementById('user_id').textContent = usuario.idusuario;
+  document.getElementById('user-name').textContent = usuario.nome;
+  document.getElementById('user-email').textContent = usuario.email;
+
+  // ID do usuário
+  var idDoUsuario = usuario.idusuario;
+
+  idGlobalUsuario2 = usuario.idusuario; // deixando global
+
+
+
+
+
+
+  // Buscar e exibir a dança escolhida ao carregar a página
+  fetch(`/minhasDancas/${idDoUsuario}`)
+  .then(response => response.json())
+  .then(dancas => {
+      const suadancaElem = document.getElementById('user-suadanca');
+      if (dancas.length > 0) {
+          suadancaElem.textContent = dancas.map(danca => danca.nomedanca).join(', ');
+      } else {
+          suadancaElem.textContent = 'Você não tem danças salvas.';
+      }
+  })
+  .catch(error => {
+      console.error('Erro ao carregar as danças:', error);
+  });
+
+  // Adiciona evento ao botão de salvar dança
+  const salvarDancaBtn = document.getElementById('salvarDancaBtn');
+  if (salvarDancaBtn) {
+      salvarDancaBtn.addEventListener('click', function() {
+          const dancaEscolhida = document.getElementById('dancaEscolhida').textContent;
+
+          fetch('/salvarDanca', {
+              method: 'POST',
+              headers: {
+                  'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({ nomedanca: dancaEscolhida, fkusuario: idDoUsuario })
+          })
+          .then(response => response.text())
+          .then(data => {
+              alert(data); // Mensagem de sucesso ou erro
+              var botao = salvarDancaBtn
+              botao.hidden = true
+              // Atualiza a dança exibida no dashboard
+              fetch(`/minhasDancas/${idDoUsuario}`)
+              .then(response => response.json())
+              .then(dancas => {
+                  const suadancaElem = document.getElementById('user-suadanca');
+                  if (dancas.length > 0) {
+                      suadancaElem.textContent = dancas.map(danca => danca.nomedanca).join(', ');
+                  } else {
+                      suadancaElem.textContent = 'Você não tem danças salvas.';
+                  }
+              })
+              .catch(error => {
+                  console.error('Erro ao atualizar as danças:', error);
+              });
+          })
+          .catch(error => {
+              console.error('Erro ao salvar a dança:', error);
+          });
+      });
+  }
+});
+
+
+function logout() {
+  // Remove o usuário do localStorage
+  localStorage.removeItem('usuario');
+  
+  // Redireciona o usuário para a página de login
+  window.location.href = '/login.html';
+}
+
+// Função de logout
+function logout() {
+  
+  localStorage.removeItem('usuario');  // Remove o usuário do localStorage
+  window.location.href = '/login.html';  // Redireciona para a página de login
+}
+
+
+
+    // Faz a requisição para o backend ao carregar a página
+    document.addEventListener("DOMContentLoaded", () => {
+        fetch("http://localhost:3010/respostas-usuario")
+            .then((response) => response.json())
+            .then((data) => {
+                const correctIncorrectData = {
+                    correct: 0,
+                    incorrect: 0
+                };
+
+                const times = [];
+
+                data.forEach((item) => {
+                    if (item.acertou) {
+                        correctIncorrectData.correct++;
+                    } else {
+                        correctIncorrectData.incorrect++;
+                    }
+                    times.push(parseFloat(item.tempo_resposta));
+                });
+
+                const averageTime = times.reduce((a, b) => a + b, 0) / times.length;
+
+                // Gráfico de Respostas Corretas e Incorretas
+                new Chart(document.getElementById("correctIncorrectChart"), {
+                    type: "pie",
+                    data: {
+                        labels: ["Corretas", "Incorretas"],
+                        datasets: [{
+                            data: [correctIncorrectData.correct, correctIncorrectData.incorrect],
+                            backgroundColor: ["#28a745", "#dc3545"],
+                            borderColor: ["#ffffff", "#ffffff"],
+                            borderWidth: 2
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: {
+                            legend: {
+                                position: 'top',
+                                labels: {
+                                    font: {
+                                        size: 14
+                                    },
+                                    color: '#333'
+                                }
+                            },
+                            title: {
+                                display: true,
+                                text: 'Distribuição de Respostas Corretas e Incorretas',
+                                font: {
+                                    size: 18
+                                },
+                                color: '#333'
+                            },
+                            tooltip: {
+                                callbacks: {
+                                    label: function (tooltipItem) {
+                                        const label = tooltipItem.label;
+                                        const value = tooltipItem.raw;
+                                        return `${label}: ${value}`;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+
+                // Gráfico de Tempo Médio de Resposta
+                new Chart(document.getElementById("averageTimeChart"), {
+                    type: "bar",
+                    data: {
+                        labels: ["Tempo Médio de Resposta"],
+                        datasets: [{
+                            label: 'Segundos',
+                            data: [averageTime],
+                            backgroundColor: ["#007bff"],
+                            borderColor: ["#007bff"],
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: {
+                            legend: {
+                                display: true,
+                                labels: {
+                                    font: {
+                                        size: 14
+                                    },
+                                    color: '#333'
+                                }
+                            },
+                            title: {
+                                display: true,
+                                text: 'Tempo Médio de Resposta',
+                                font: {
+                                    size: 18
+                                },
+                                color: '#333'
+                            },
+                            tooltip: {
+                                callbacks: {
+                                    label: function (tooltipItem) {
+                                        const value = tooltipItem.raw;
+                                        return `Tempo Médio: ${value.toFixed(2)} segundos`;
+                                    }
+                                }
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                ticks: {
+                                    font: {
+                                        size: 14
+                                    },
+                                    color: '#333'
+                                },
+                                title: {
+                                    display: true,
+                                    text: 'Segundos',
+                                    font: {
+                                        size: 16
+                                    },
+                                    color: '#333'
+                                }
+                            }
+                        }
+                    }
+                });
+            })
+            .catch((error) => console.error("Erro ao buscar dados:", error));
+    });
+
+    /*
+    Aqui em baixo é outro script q traz uma dash diferente eu acho 
+    */
+
+    document.addEventListener("DOMContentLoaded", () => {
+        fetch("http://localhost:3010/respostas-usuarios")
+            .then((response) => response.json())
+            .then((data) => {
+                const questionStats = {};
+
+                data.forEach((item) => {
+                    if (!questionStats[item.pergunta]) {
+                        questionStats[item.pergunta] = { correct: 0, incorrect: 0 };
+                    }
+                    if (item.acertou) {
+                        questionStats[item.pergunta].correct++;
+                    } else {
+                        questionStats[item.pergunta].incorrect++;
+                    }
+                });
+
+                const mostCorrectQuestions = Object.entries(questionStats)
+                    .sort((a, b) => b[1].correct - a[1].correct)
+                    .slice(0, 5); // Pegue as 5 mais acertadas
+
+                const mostIncorrectQuestions = Object.entries(questionStats)
+                    .sort((a, b) => b[1].incorrect - a[1].incorrect)
+                    .slice(0, 5); // Pegue as 5 mais erradas
+
+                // Gráfico de Perguntas Mais Acertadas
+                new Chart(document.getElementById("mostCorrectChart"), {
+                    type: "bar",
+                    data: {
+                        labels: mostCorrectQuestions.map(q => q[0]),
+                        datasets: [{
+                            label: 'Corretas',
+                            data: mostCorrectQuestions.map(q => q[1].correct),
+                            backgroundColor: "#28a745"
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: {
+                            legend: {
+                                display: false
+                            },
+                            title: {
+                                display: true,
+                                text: 'Perguntas Mais Acertadas',
+                                font: {
+                                    size: 18
+                                },
+                                color: '#333'
+                            },
+                            tooltip: {
+                                callbacks: {
+                                    label: function (tooltipItem) {
+                                        const value = tooltipItem.raw;
+                                        return `Corretas: ${value}`;
+                                    }
+                                }
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                ticks: {
+                                    font: {
+                                        size: 14
+                                    },
+                                    color: '#333'
+                                },
+                                title: {
+                                    display: true,
+                                    text: 'Número de Acertos',
+                                    font: {
+                                        size: 16
+                                    },
+                                    color: '#333'
+                                }
+                            }
+                        }
+                    }
+                });
+
+                // Gráfico de Perguntas Mais Erradas
+                new Chart(document.getElementById("mostIncorrectChart"), {
+                    type: "bar",
+                    data: {
+                        labels: mostIncorrectQuestions.map(q => q[0]),
+                        datasets: [{
+                            label: 'Erradas',
+                            data: mostIncorrectQuestions.map(q => q[1].incorrect),
+                            backgroundColor: "#dc3545"
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: {
+                            legend: {
+                                display: false
+                            },
+                            title: {
+                                display: true,
+                                text: 'Perguntas Mais Erradas',
+                                font: {
+                                    size: 18
+                                },
+                                color: '#333'
+                            },
+                            tooltip: {
+                                callbacks: {
+                                    label: function (tooltipItem) {
+                                        const value = tooltipItem.raw;
+                                        return `Erradas: ${value}`;
+                                    }
+                                }
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                ticks: {
+                                    font: {
+                                        size: 14
+                                    },
+                                    color: '#333'
+                                },
+                                title: {
+                                    display: true,
+                                    text: 'Número de Erros',
+                                    font: {
+                                        size: 16
+                                    },
+                                    color: '#333'
+                                }
+                            }
+                        }
+                    }
+                });
+            })
+            .catch((error) => console.error("Erro ao buscar dados:", error));
+    });
+
+
+</script>
+</body>
+
+</html>

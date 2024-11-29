@@ -1,191 +1,112 @@
-// Dados do quiz
-const questions = [
-    { question: "Caporal é brasileiro?", answer: false },
-    { question: "caporal usa cascaveis?", answer: true },
-    { question: "Tinku é de potosi?", answer: true },
-    { question: "Diablada é o diabo?", answer: false }
+ // Perguntas e respostas
+ const questions = [
+    {
+        question: "Qual é a capital da Bolívia?",
+        options: ["La Paz", "Quito", "Lima", "Buenos Aires"],
+        correct: 0
+    },
+    {
+        question: "Qual é a dança mais famosa do folclore boliviano?",
+        options: ["Caporales", "Samba", "Flamenco", "Tango"],
+        correct: 0
+    },
+    {
+        question: "Qual é a moeda oficial da Bolívia?",
+        options: ["Peso", "Dólar", "Boliviano", "Euro"],
+        correct: 2
+    }
 ];
 
-// Variáveis globais
-let currentIndex = 0;
-let correctCount = 0;
-let incorrectCount = 0;
+// Armazena resultados
+const results = [];
+
+// Estado do jogo
+let currentQuestionIndex = 0;
 let startTime;
-let questionTimes = [];
-let answerStats = questions.map(() => ({ correct: 0, incorrect: 0 }));
 
-// Elementos do DOM
-const startButton = document.getElementById("start-button");
-const questionContainer = document.getElementById("question-container");
-const questionElement = document.getElementById("question");
-const trueButton = document.getElementById("true-button");
-const falseButton = document.getElementById("false-button");
-const kpiContainer = document.getElementById("kpi-container");
-const correctCountElement = document.getElementById("correct-count");
-const incorrectCountElement = document.getElementById("incorrect-count");
-const mostCorrectElement = document.getElementById("most-correct");
-const mostIncorrectElement = document.getElementById("most-incorrect");
-const responseTimesElement = document.getElementById("response-times");
-
-// Iniciar o quiz
-startButton.addEventListener("click", startQuiz);
-
-function startQuiz() {
-    startButton.classList.add("hidden");
-    kpiContainer.classList.add("hidden");
-    questionContainer.classList.remove("hidden");
-
-    // Reiniciar variáveis
-    currentIndex = 0;
-    correctCount = 0;
-    incorrectCount = 0;
-    questionTimes = [];
-    answerStats = questions.map(() => ({ correct: 0, incorrect: 0 }));
-
-    loadQuestion();
-}
-
-// Carregar a próxima pergunta
+// Carrega a primeira pergunta
 function loadQuestion() {
-    if (currentIndex >= questions.length) {
-        endQuiz();
-        return;
-    }
+    const question = questions[currentQuestionIndex];
+    document.getElementById('question-text').innerText = question.question;
 
-    const currentQuestion = questions[currentIndex];
-    questionElement.textContent = currentQuestion.question;
-    startTime = new Date().getTime();
+    const buttons = document.querySelectorAll('.options button');
+    question.options.forEach((option, index) => {
+        buttons[index].innerText = option;
+    });
+
+    startTime = new Date().getTime(); // Marca o tempo de início
 }
 
-// Responder a pergunta
-function answerQuestion(isTrue) {
-    const currentQuestion = questions[currentIndex];
-    const endTime = new Date().getTime();
+// Lida com a resposta do usuário
+function selectAnswer(selectedIndex) {
+    const question = questions[currentQuestionIndex];
+    const endTime = new Date().getTime(); // Marca o tempo de término
+    const timeTaken = (endTime - startTime) / 1000; // Tempo em segundos
 
-    const isCorrect = isTrue === currentQuestion.answer;
-    if (isCorrect) {
-        correctCount++;
-        answerStats[currentIndex].correct++;
+    results.push({
+        question: question.question,
+        correctAnswer: question.options[question.correct],
+        userAnswer: question.options[selectedIndex],
+        isCorrect: selectedIndex === question.correct,
+        timeTaken
+    });
+
+    currentQuestionIndex++;
+
+    if (currentQuestionIndex < questions.length) {
+        loadQuestion();
     } else {
-        incorrectCount++;
-        answerStats[currentIndex].incorrect++;
+        showResults();
     }
-
-    // Calcular tempo de resposta em segundos
-    const responseTime = ((endTime - startTime) / 1000).toFixed(2);
-    questionTimes.push({ question: currentQuestion.question, time: responseTime });
-
-    currentIndex++;
-    loadQuestion();
 }
 
-// Exibir resultados
-function endQuiz() {
-    questionContainer.classList.add("hidden");
-    kpiContainer.classList.remove("hidden");
-
-    correctCountElement.textContent = correctCount;
-    incorrectCountElement.textContent = incorrectCount;
-
-    const mostCorrectIndex = answerStats.findIndex(
-        stat => stat.correct === Math.max(...answerStats.map(s => s.correct))
-    );
-    const mostIncorrectIndex = answerStats.findIndex(
-        stat => stat.incorrect === Math.max(...answerStats.map(s => s.incorrect))
-    );
-
-    mostCorrectElement.textContent = questions[mostCorrectIndex]?.question || "Nenhuma";
-    mostIncorrectElement.textContent = questions[mostIncorrectIndex]?.question || "Nenhuma";
-
-    // Mostrar os tempos de resposta
-    responseTimesElement.innerHTML = questionTimes
-        .map(item => `<li>${item.question}: ${item.time}s</li>`)
-        .join("");
-
-    // Salvar os dados no banco de dados
-    salvarQuiz(correctCount, incorrectCount, mostCorrectElement.textContent, mostIncorrectElement.textContent, questionTimes);
-}
-
-// Salvar os dados no banco de dados
-function salvarQuiz(correct, incorrect, mostCorrect, mostIncorrect, responseTimes) {
-    const fkUsuario = 1; // Substitua pelo ID do usuário logado.
-    const payload = {
-        correct,
-        incorrect,
-        mostCorrect,
-        mostIncorrect,
-        responseTimes,
-        fkUsuario,
-    };
-
-    fetch("/api/quiz", {
+// Exibe os resultados
+function saveToDatabase(data) {
+    fetch("http://localhost:3000/salvar-resposta", {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
         },
-        body: JSON.stringify(payload),
+        body: JSON.stringify(data),
     })
         .then((response) => {
             if (!response.ok) {
-                throw new Error("Erro ao salvar os dados.");
+                console.error("Erro ao salvar dados no banco.");
             }
-            return response.json();
         })
-        .then((data) => {
-            console.log("Dados salvos com sucesso:", data);
-        })
-        .catch((error) => {
-            console.error("Erro ao salvar os dados:", error);
-        });
+        .catch((error) => console.error("Erro na comunicação com o servidor:", error));
 }
-// Função para mostrar os KPIs na dashboard
-// Adicionar evento ao botão
-document.addEventListener("DOMContentLoaded", () => {
-    const fkUsuario = 1; // Substitua com o ID do usuário logado
-    const loadDataButton = document.getElementById("load-data-btn");
 
-    loadDataButton.addEventListener("click", () => {
-        mostrarDashboard(fkUsuario);
+// Exibe os resultados e envia para o banco
+function showResults() {
+    const resultsDiv = document.getElementById("results");
+    resultsDiv.innerHTML = "<h2>Resultados:</h2>";
+
+    results.forEach((result, index) => {
+        resultsDiv.innerHTML += `
+    <p><strong>Pergunta ${index + 1}:</strong> ${result.question}</p>
+    <p><strong>Resposta Correta:</strong> ${result.correctAnswer}</p>
+    <p><strong>Resposta Dada:</strong> ${result.userAnswer}</p>
+    <p><strong>Tempo:</strong> ${result.timeTaken.toFixed(2)} segundos</p>
+    <hr>
+`;
+
+        // Adicione o idUsuario ao objeto enviado
+        saveToDatabase({
+            pergunta: result.question,
+            resposta_correta: result.correctAnswer,
+            resposta_usuario: result.userAnswer,
+            correta: result.isCorrect,
+            tempo: result.timeTaken,
+            fkusuario: idUsuario, // Aqui o idUsuario é enviado
+        });
     });
-function mostrarDashboard(fkUsuario) {
-    fetch(`/api/quiz/${fkUsuario}`)
-        .then((response) => {
-            if (!response.ok) {
-                throw new Error("Erro ao buscar os dados.");
-            }
-            return response.json();
-        })
-        .then((data) => {
-            if (data.length === 0) {
-                alert("Nenhum dado encontrado para este usuário.");
-                return;
-            }
 
-            // KPIs
-            const totalCorrect = data.reduce((sum, item) => sum + item.respostas_certas, 0);
-            const totalIncorrect = data.reduce((sum, item) => sum + item.respostas_erradas, 0);
-            const averageTime = data
-                .reduce((sum, item) => sum + JSON.parse(item.tempos_resposta).reduce((a, b) => a + b, 0), 0) /
-                data.reduce((sum, item) => sum + JSON.parse(item.tempos_resposta).length, 0);
-
-            // Atualizar elementos da página
-            document.getElementById("correct-answers").textContent = totalCorrect;
-            document.getElementById("incorrect-answers").textContent = totalIncorrect;
-            document.getElementById("average-time").textContent = averageTime.toFixed(2);
-
-            // Mostrar a dashboard
-            document.getElementById("dashboard").classList.remove("hidden");
-        })
-        .catch((error) => {
-            console.error("Erro ao buscar os dados:", error);
-            alert("Não foi possível carregar os dados.");
-        });
+    document.getElementById("quiz-container").style.display = "none";
 }
 
+// Certifique-se de que idUsuario está definido corretamente
+var idUsuario = 1;
 
-});
-
-
-// Eventos de resposta
-trueButton.addEventListener("click", () => answerQuestion(true));
-falseButton.addEventListener("click", () => answerQuestion(false));
+// Inicializa o quiz
+loadQuestion();

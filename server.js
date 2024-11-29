@@ -210,6 +210,90 @@ app.get("/api/quiz/:fkUsuario", (req, res) => {
   });
 });
 
+// Endpoint para salvar dados do quiz
+app.post("/salvar-resposta", (req, res) => {
+  const { pergunta, resposta_correta, resposta_usuario, correta, tempo, fkusuario } = req.body;
+
+  const query = `
+      INSERT INTO Respostas (pergunta, resposta_correta, resposta_usuario, correta, tempo, fkusuario)
+      VALUES (?, ?, ?, ?, ?, ?)
+  `;
+
+  db.query(query, [pergunta, resposta_correta, resposta_usuario, correta, tempo, fkusuario], (err, result) => {
+      if (err) {
+          console.error("Erro ao inserir dados:", err);
+          res.status(500).send("Erro ao salvar dados.");
+      } else {
+          res.status(200).send("Dados salvos com sucesso.");
+      }
+  });
+});
+
+
+// buscando as tabelas para respostas 
+
+
+
+app.get("/respostas-usuarios", (req, res) => {
+  const query = `
+      SELECT 
+          usuario.nome AS usuario,
+          usuario.email AS email,
+          Respostas.pergunta AS pergunta,
+          Respostas.resposta_correta AS resposta_correta,
+          Respostas.resposta_usuario AS resposta_usuario,
+          Respostas.correta AS acertou,
+          Respostas.tempo AS tempo_resposta
+      FROM 
+          Respostas
+      JOIN 
+          usuario ON Respostas.fkusuario = Usuario.idusuario;
+  `;
+
+  db.query(query, (err, results) => {
+      if (err) {
+          console.error("Erro ao buscar respostas dos usuários:", err);
+          res.status(500).send("Erro ao buscar dados.");
+      } else {
+          console.log("Resultados da consulta:", results); // Loga os dados
+          res.json(results);
+      }
+  });
+});
+
+
+
+app.get("/respostas-usuario", (req, res) => {
+
+  const query = `
+      SELECT 
+    usuario.nome AS usuario,
+    usuario.email AS email,
+    Respostas.pergunta AS pergunta,
+    Respostas.resposta_correta AS resposta_correta,
+    Respostas.resposta_usuario AS resposta_usuario,
+    Respostas.correta AS acertou,
+    Respostas.tempo AS tempo_resposta
+FROM 
+    usuario
+JOIN 
+    Respostas ON usuario.idusuario = Respostas.fkusuario
+WHERE 
+    Respostas.fkusuario = 3;
+  `;
+
+  db.query(query, (err, results) => {
+      if (err) {
+          console.error("Erro ao buscar respostas dos usuários:", err);
+          res.status(500).send("Erro ao buscar dados.");
+      } else {
+          console.log("Resultados da consulta:", results); // Loga os dados
+          res.json(results);
+      }
+  });
+});
+
+
 
 // Iniciar o servidor
 

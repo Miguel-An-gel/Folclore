@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <link rel="stylesheet" href="../css/dash.css">
+    <link rel="stylesheet" href="/css/perguntas.css">
+    <link rel="stylesheet" href="/css/forca.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+
+
+    <style>
+        #questoes{
+            display: flex;
+        }
+        #dashboard {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            width: 40%;
+            margin: 0;
+        }
+
+        canvas {
+            margin: 20px auto;
+            max-width: 600px;
+        }
+
+
+        #dashboard2 {
+            background-color: #fff;
+            padding: 20px;
+            
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            width: 40%;
+            margin: 0;
+        }
+
+        canvas {
+            margin: 20px auto;
+            max-width: 600px;
+            font-family: Arial, sans-serif;
+    text-align: center;
+    aspect-ratio: auto 1000 / 500;
+    margin: 20px auto;
+    max-width: 600px;
+    display: block;
+    box-sizing: border-box;
+    height: 250px;
+    width: 500px;
+        }
+        #quiz-container{
+            width: 100%;
+        }
+        #question-text{
+            font-size: 30px;
+    padding: 70px;
+    font-weight: bold;
+    color: #fff;
+    display: flex;
+    justify-self: center;
+
+            
+        }
+        .question{
+            border: 0px;
+    margin: 0px;
+    padding: 0px;
+    background-color: #16406ccf;
+        }
+        .options{
+            margin-top: 100px;
+    display: flex;
+    justify-content: space-evenly;
+        }
+        .options button{
+            margin: 10px;
+    padding: 20px;
+    width: 11vw;
+        }
+
+        .results{
+            padding: 15px;
+
+        }
+
+    </style>
+</head>
+
+<body>
+    <!-- Header -->
+    <header>
+        <nav>
+            <div class="logo">
+                <a href="../index.html">
+                    <img src="assets/imagens/logo.png" alt="Logo Dança com cores">
+                </a>
+            </div>
+
+            <!-- Dance Icon -->
+            <div class="danca" id="danca-icon">
+                <button onclick="logout()"><a>Sair</a></button>
+            </div>
+        </nav>
+    </header>
+
+    <div class="dashboard">
+        <!-- Sidebar -->
+
+        <div id="user-info" class="sidebar">
+            <img src="assets/imagens/perfil/perfil.png" alt="">
+            <h2>Seja Bem-Vindo! <p><strong><span id="user-name"></span></strong> </p>
+            </h2> <br>
+            <p hidden><strong>Email:</strong> <span id="user-email"></span></p>
+            <p hidden><strong>ID do Usuário:</strong> <span id="user_id"></span></p>
+            <p><strong>Sua dança é : <span id="user-suadanca"></span></strong></p>
+
+
+
+            <br>
+            <div class="opcao">
+
+                
+                <a href="dashboard.html"><button>JOGUE</button> </a><br> <br>
+              
+                <a href="dahsstatiticas.html"><button>GRAFICO</button> </a>
+
+            </div>
+
+
+
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+
+            <div id="questoes">
+
+                
+                <div id="quiz-container">
+                    <div class="question">
+                        <img src="/public/assets/imagens/back/02old.jpg" alt="">
+                        <p id="question-text"></p>
+                        <div class="options">
+                            <button onclick="selectAnswer(0)">A</button>
+                            <button onclick="selectAnswer(1)">B</button>
+                            <button onclick="selectAnswer(2)">C</button>
+                            <button onclick="selectAnswer(3)">D</button>
+                        </div>
+                    </div>
+                    
+                </div>
+                <div id="rasultadotext"></div>
+                <div class="results" id="results"></div>
+
+            </div>
+        </div>
+    </div>
+
+
+
+
+
+</body>
+
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+
+    /*
+    globall
+    */
+
+    
+let idGlobalUsuario;
+document.addEventListener('DOMContentLoaded', () => {
+  // Recupera os dados do usuário do localStorage
+  const usuario = JSON.parse(localStorage.getItem('usuario'));
+
+  // Verifica se o usuário está logado
+  if (!usuario) {
+      alert('Você precisa fazer login!');
+      window.location.href = '/login.html';  // Redireciona para login caso não haja usuário no localStorage
+      return;
+  }
+
+  // Preenche os campos com os dados do usuário
+  document.getElementById('user_id').textContent = usuario.idusuario;
+  document.getElementById('user-name').textContent = usuario.nome;
+  document.getElementById('user-email').textContent = usuario.email;
+
+  // ID do usuário
+  var idDoUsuario = usuario.idusuario;
+
+  idGlobalUsuario = usuario.idusuario; // deixando global
+
+
+
+
+
+
+  // Buscar e exibir a dança escolhida ao carregar a página
+  fetch(`/minhasDancas/${idDoUsuario}`)
+  .then(response => response.json())
+  .then(dancas => {
+      const suadancaElem = document.getElementById('user-suadanca');
+      if (dancas.length > 0) {
+          suadancaElem.textContent = dancas.map(danca => danca.nomedanca).join(', ');
+      } else {
+          suadancaElem.textContent = 'Você não tem danças salvas.';
+      }
+  })
+  .catch(error => {
+      console.error('Erro ao carregar as danças:', error);
+  });
+
+  // Adiciona evento ao botão de salvar dança
+  const salvarDancaBtn = document.getElementById('salvarDancaBtn');
+  if (salvarDancaBtn) {
+      salvarDancaBtn.addEventListener('click', function() {
+          const dancaEscolhida = document.getElementById('dancaEscolhida').textContent;
+
+          fetch('/salvarDanca', {
+              method: 'POST',
+              headers: {
+                  'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({ nomedanca: dancaEscolhida, fkusuario: idDoUsuario })
+          })
+          .then(response => response.text())
+          .then(data => {
+              alert(data); // Mensagem de sucesso ou erro
+              var botao = salvarDancaBtn
+              botao.hidden = true
+              // Atualiza a dança exibida no dashboard
+              fetch(`/minhasDancas/${idDoUsuario}`)
+              .then(response => response.json())
+              .then(dancas => {
+                  const suadancaElem = document.getElementById('user-suadanca');
+                  if (dancas.length > 0) {
+                      suadancaElem.textContent = dancas.map(danca => danca.nomedanca).join(', ');
+                  } else {
+                      suadancaElem.textContent = 'Você não tem danças salvas.';
+                  }
+              })
+              .catch(error => {
+                  console.error('Erro ao atualizar as danças:', error);
+              });
+          })
+          .catch(error => {
+              console.error('Erro ao salvar a dança:', error);
+          });
+      });
+  }
+});
+
+
+function logout() {
+  // Remove o usuário do localStorage
+  localStorage.removeItem('usuario');
+  
+  // Redireciona o usuário para a página de login
+  window.location.href = '/login.html';
+}
+
+// Função de logout
+function logout() {
+  
+  localStorage.removeItem('usuario');  // Remove o usuário do localStorage
+  window.location.href = '/login.html';  // Redireciona para a página de login
+}
+
+        // Perguntas e respostas
+        const questions = [
+            {
+                question: "Qual dança boliviana retrata o sofrimento dos escravos africanos nas minas de prata de Potosí?",
+                options: ["Caporal", "Tinku", "Morenada", "Diablada"],
+                correct: 2
+            },
+            {
+                question: "Qual evento boliviano tem a Diablada como uma de suas principais atrações?",
+                options: ["Festa de Todos os Santos", "Carnaval de Oruro", "Festival das Águas", "Celebração de Pachamama"],
+                correct: 1
+            },
+            {
+                question: "Qual é a dança boliviana mais emblemática, caracterizada pela luta entre o bem e o mal?",
+                options: ["Caporal", "Tinku", "Morenada", "Diablada"],
+                correct: 3
+            },
+            {
+                question: "O termo 'Morenada' deriva de qual palavra e qual é seu significado?",
+                options: ["Moreno", "Morar", "Moreira", "Morena"],
+                correct: 0
+            },
+            {
+                question: "Qual é o significado da palavra 'Tinku' na língua quíchua?",
+                options: ["Celebração religiosa", "Encontro ou confronto", " Fertilidade da terra", "Dança cerimonial"],
+                correct: 1
+            }
+        ];
+
+        // Armazena resultados
+        const results = [];
+
+        // Estado do jogo
+        let currentQuestionIndex = 0;
+        let startTime;
+
+        // Carrega a primeira pergunta
+        function loadQuestion() {
+            const question = questions[currentQuestionIndex];
+            document.getElementById('question-text').innerText = question.question;
+
+            const buttons = document.querySelectorAll('.options button');
+            question.options.forEach((option, index) => {
+                buttons[index].innerText = option;
+            });
+
+            startTime = new Date().getTime(); // Marca o tempo de início
+        }
+
+        // Lida com a resposta do usuário
+        function selectAnswer(selectedIndex) {
+            const question = questions[currentQuestionIndex];
+            const endTime = new Date().getTime(); // Marca o tempo de término
+            const timeTaken = (endTime - startTime) / 1000; // Tempo em segundos
+
+            results.push({
+                question: question.question,
+                correctAnswer: question.options[question.correct],
+                userAnswer: question.options[selectedIndex],
+                isCorrect: selectedIndex === question.correct,
+                timeTaken
+            });
+
+            currentQuestionIndex++;
+
+            if (currentQuestionIndex < questions.length) {
+                loadQuestion();
+            } else {
+                showResults();
+            }
+        }
+
+        // Exibe os resultados
+        function saveToDatabase(data) {
+            fetch("http://localhost:3010/salvar-resposta", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(data),
+            })
+                .then((response) => {
+                    if (!response.ok) {
+                        console.error("Erro ao salvar dados no banco.");
+                    }
+                })
+                .catch((error) => console.error("Erro na comunicação com o servidor:", error));
+        }
+
+        const curiosidades=["O Tinku representa uma luta simbólica para honrar a Pachamama, onde se acreditava que o sangue derramado fertilizaria a terra.",
+        "Instrumentos como o charango, feito de casca de armadillo, e a zampoña, uma flauta andina, são elementos centrais da música folclórica boliviana.",
+        "O Carnaval de Oruro é famoso pelas apresentações da Diablada, com seus trajes elaborados e simbolismo religioso.",
+        "Os dançarinos usam botas pesadas que produzem sons rítmicos, sincronizados com as batidas das músicas.",
+        " A Diablada simboliza a luta entre o bem e o mal e é o ponto alto do Carnaval de Oruro.",
+        "Os movimentos ritmados da Morenada simbolizam as correntes que os escravos carregavam e o trabalho exaustivo que enfrentavam.",
+        "As botas produzem sons rítmicos sincronizados com as músicas, simbolizando autoridade e resistência.",
+        " A Diablada é um espetáculo visual conhecido por seus trajes luxuosos e máscaras elaboradas, sendo o ponto alto do Carnaval de Oruro.",
+        "Este Carnaval foi declarado Patrimônio Cultural Imaterial da Humanidade pela UNESCO."
+ 
+    ]
+        // Exibe os resultados e envia para o banco
+        function showResults() {
+            const resultsDiv = document.getElementById("results");
+            
+
+            results.forEach((result, index) => {
+
+            
+                resultsDiv.innerHTML = `
+                <h2>CONFIRA ALGUMAS CURIODIDADES</h2>
+                <hr>
+            <p><strong>Curiosidade :</strong> ${curiosidades[0]}</p>
+            <hr>
+            <p><strong>Curiosidade :</strong> ${curiosidades[1]}</p>
+            <hr>
+            <p><strong>Curiosidade :</strong> ${curiosidades[2]}</p>
+            <hr>
+            <p><strong>Curiosidade :</strong> ${curiosidades[3]}</p>
+            <hr>
+            <p><strong>Curiosidade :</strong> ${curiosidades[4]}</p>
+            <hr>
+            <p><strong>Curiosidade :</strong> ${curiosidades[5]}</p>
+            <hr>
+            <p><strong>Curiosidade :</strong> ${curiosidades[6]}</p>
+            <hr>
+            <p><strong>Curiosidade :</strong> ${curiosidades[7]}</p>
+            <hr>
+            <p><strong>Curiosidade :</strong> ${curiosidades[8]}</p>
+            <hr><br>
+            <p><strong>CONFIRA O GRAFICO AO LADO PARA VER SEUS ACERTOS E ERROS :</strong> </p>
+        `;
+
+                // Adicione o idUsuario ao objeto enviado
+                saveToDatabase({
+                    pergunta: result.question,
+                    resposta_correta: result.correctAnswer,
+                    resposta_usuario: result.userAnswer,
+                    correta: result.isCorrect,
+                    tempo: result.timeTaken,
+                    fkusuario: idGlobalUsuario, // Aqui o idUsuario é enviado
+                });
+            });
+
+            document.getElementById("quiz-container").style.display = "none";
+        }
+
+        // Certifique-se de que idUsuario está definido corretamente
+        var idUsuario = 1;
+
+        // Inicializa o quiz
+        loadQuestion();
+</script>
+</body>
+
+</html>
