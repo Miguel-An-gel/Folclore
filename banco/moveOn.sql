@@ -35,4 +35,9 @@ foreign key(fkusuario) references usuario(idusuario)
 
 
 
+select * from respostas;
+select * from usuario;
+
+
+
 
