@@ -18,18 +18,19 @@ Siga estes passos para configurar e executar o projeto em sua máquina local.
 1. Clonar o Repositório
 Abra seu terminal ou Git Bash, navegue até o diretório onde deseja salvar o projeto e execute o comando:
 
-Bash
+Usando o Git Bash
 
 git clone https://github.com/Miguel-An-gel/Folclore.git
 Depois, entre na pasta do projeto:
 
-Bash
+Usando o Git Bash
 
 cd Folclore
+
 2. Instalar as Dependências do Backend
 O backend é feito em Node.js e precisa de pacotes (como express e mysql2). Para instalá-los, execute no seu terminal:
 
-Bash
+Usando o Git Bash
 
 npm install
 
