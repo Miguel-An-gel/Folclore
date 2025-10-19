@@ -13,7 +13,6 @@
 
 
         <style>
-    /* Estilos do Quiz */
     #quiz-container {
         width: 100%;
         text-align: center;
@@ -22,44 +21,43 @@
     .question {
         border: 0px;
         margin: 0px;
-        padding: 20px; /* Adicionado padding */
+        padding: 20px; 
         background-color: #16406ccf;
-        border-radius: 10px; /* Adicionado borda */
+        border-radius: 10px; 
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     }
     
-    /* Imagem de fundo da pergunta */
     .question img {
         width: 100%;
-        max-height: 250px; /* Limite de altura */
-        object-fit: cover; /* Garante que a imagem cubra a área */
+        max-height: 250px; 
+        object-fit: cover; 
         border-radius: 10px 10px 0 0;
-        margin: -20px -20px 20px -20px; /* Faz a imagem preencher o topo */
+        margin: -20px -20px 20px -20px; 
     }
 
     #question-text {
-        font-size: 1.5rem; /* 30px é muito grande */
-        padding: 10px 20px 30px 20px; /* Padding ajustado */
+        font-size: 1.5rem; 
+        padding: 10px 20px 30px 20px; 
         font-weight: bold;
         color: #fff;
-        min-height: 100px; /* Garante altura mínima para o texto */
+        min-height: 100px; 
         display: flex;
         align-items: center;
         justify-content: center;
     }
 
     .options {
-        margin-top: 20px; /* Reduzido de 100px */
+        margin-top: 20px; 
         display: flex;
-        flex-wrap: wrap; /* Para telas menores */
+        flex-wrap: wrap; 
         justify-content: space-evenly;
     }
 
     .options button {
         margin: 10px;
         padding: 15px;
-        width: 40%; /* Ajustado de 'vw' para '%' para melhor responsividade */
-        min-width: 200px; /* Largura mínima */
+        width: 40%; 
+        min-width: 200px; 
         font-size: 1rem;
         border: none;
         border-radius: 5px;
@@ -71,7 +69,6 @@
         background-color: #ddd;
     }
 
-    /* Estilos dos Resultados (Curiosidades) */
     .results {
         padding: 20px;
         background-color: #fff;
@@ -93,7 +90,6 @@
 </head>
 
 <body>
-    <!-- Header -->
     <header>
         <nav>
             <div class="logo">
@@ -102,7 +98,6 @@
                 </a>
             </div>
 
-            <!-- Dance Icon -->
             <div class="danca" id="danca-icon">
                 <button onclick="logout()"><a>Sair</a></button>
             </div>
@@ -110,7 +105,6 @@
     </header>
 
     <div class="dashboard">
-        <!-- Sidebar -->
 
         <div id="user-info" class="sidebar">
             <img src="assets/imagens/perfil/perfil.png" alt="">
@@ -136,7 +130,6 @@
 
         </div>
 
-        <!-- Main Content -->
         <div class="main-content">
 
             <div id="questoes">
@@ -170,25 +163,7 @@
 
 </html>
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 <script>
-
-    /*
-    globall
-    */
 
     /*
     globall
@@ -196,7 +171,6 @@
     let idGlobalUsuario;
 
     document.addEventListener('DOMContentLoaded', () => {
-        // Recupera os dados do usuário do localStorage
         const usuario = JSON.parse(localStorage.getItem('usuario'));
 
         // Verifica se o usuário está logado
@@ -206,15 +180,12 @@
             return;
         }
 
-        // Preenche os campos com os dados do usuário
         document.getElementById('user_id').textContent = usuario.idusuario;
         document.getElementById('user-name').textContent = usuario.nome;
         document.getElementById('user-email').textContent = usuario.email;
 
-        // ID do usuário
-        idGlobalUsuario = usuario.idusuario; // deixando global
+        idGlobalUsuario = usuario.idusuario; 
 
-        // Buscar e exibir a dança escolhida ao carregar a página
         fetch(`/minhasDancas/${idGlobalUsuario}`)
             .then(response => response.json())
             .then(dancas => {
@@ -229,25 +200,19 @@
                 console.error('Erro ao carregar as danças:', error);
             });
 
-        // Adiciona evento ao botão de salvar dança
         const salvarDancaBtn = document.getElementById('salvarDancaBtn');
         if (salvarDancaBtn) {
             salvarDancaBtn.addEventListener('click', function() {
-                // ... (seu código de salvar dança continua o mesmo) ...
+             
             });
         }
     });
 
-    // Função de logout (definida apenas uma vez)
     function logout() {
-        localStorage.removeItem('usuario'); // Remove o usuário do localStorage
-        window.location.href = '/login.html'; // Redireciona para a página de login
+        localStorage.removeItem('usuario'); 
+        window.location.href = '/login.html'; 
     }
 
-
-    // --- LÓGICA DO QUIZ ---
-
-    // Perguntas e respostas
     const questions = [{
         question: "Qual dança boliviana retrata o sofrimento dos escravos africanos nas minas de prata de Potosí?",
         options: ["Caporal", "Tinku", "Morenada", "Diablada"],
@@ -270,14 +235,11 @@
         correct: 1
     }];
 
-    // Armazena resultados
     const results = [];
 
-    // Estado do jogo
     let currentQuestionIndex = 0;
     let startTime;
 
-    // Carrega a primeira pergunta
     function loadQuestion() {
         const question = questions[currentQuestionIndex];
         document.getElementById('question-text').innerText = question.question;
@@ -290,19 +252,17 @@
         startTime = new Date().getTime(); // Marca o tempo de início
     }
 
-    // Lida com a resposta do usuário
     function selectAnswer(selectedIndex) {
         const question = questions[currentQuestionIndex];
-        const endTime = new Date().getTime(); // Marca o tempo de término
-        const timeTaken = (endTime - startTime) / 1000; // Tempo em segundos
-
+        const endTime = new Date().getTime(); 
+        const timeTaken = (endTime - startTime) / 1000; 
         results.push({
             pergunta: question.question,
             resposta_correta: question.options[question.correct],
             resposta_usuario: question.options[selectedIndex],
             correta: selectedIndex === question.correct,
             tempo: timeTaken,
-            fkusuario: idGlobalUsuario // Adiciona o ID global a cada resultado
+            fkusuario: idGlobalUsuario 
         });
 
         currentQuestionIndex++;
@@ -310,19 +270,17 @@
         if (currentQuestionIndex < questions.length) {
             loadQuestion();
         } else {
-            showResults(); // Chama a nova função de resultados
+            showResults(); 
         }
     }
 
-    // --- FUNÇÃO DE SALVAMENTO (NOVA) ---
-    // Envia TODOS os resultados de uma vez
     function saveQuizResults(allResults) {
-        fetch("http://localhost:3010/salvar-quiz-completo", { // Rota nova!
+        fetch("http://localhost:3010/salvar-quiz-completo", { 
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
                 },
-                body: JSON.stringify(allResults), // Envia o ARRAY [ ... ]
+                body: JSON.stringify(allResults), 
             })
             .then((response) => {
                 if (!response.ok) {
@@ -346,13 +304,11 @@
         "Este Carnaval foi declarado Patrimônio Cultural Imaterial da Humanidade..."
     ];
 
-    // --- FUNÇÃO DE RESULTADOS (CORRIGIDA) ---
     function showResults() {
         const resultsDiv = document.getElementById("results");
 
-        // 1. Mostra as curiosidades APENAS UMA VEZ
-        // (Vamos embaralhar para mostrar 3 aleatórias)
-        curiosidades.sort(() => 0.5 - Math.random()); // Embaralha
+        
+        curiosidades.sort(() => 0.5 - Math.random()); 
         
         resultsDiv.innerHTML = `
             <h2>CONFIRA ALGUMAS CURIOSIDADES</h2>
@@ -367,10 +323,8 @@
             <p><strong>CONFIRA O GRAFICO AO LADO PARA VER SEUS ACERTOS E ERROS.</strong></p>
         `;
 
-        // 2. Salva TODOS os resultados de uma vez
         saveQuizResults(results);
 
-        // 3. Esconde o container do quiz
         document.getElementById("quiz-container").style.display = "none";
     }
 

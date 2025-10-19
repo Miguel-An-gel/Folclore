@@ -1,4 +1,3 @@
-drop database dancacomcores;
 
 create database dancacomcores;
 use dancacomcores;

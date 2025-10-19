@@ -23,7 +23,7 @@ async function cadastrar(event) {
 
     if (response.ok) {
       alert(data.message);
-      window.location.href = '/login.html'; // Substitua pelo caminho da sua página de login
+      window.location.href = '/login.html'; 
     } else {
       alert(data.error);
     }

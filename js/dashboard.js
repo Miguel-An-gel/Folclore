@@ -13,15 +13,12 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
     }
 
-    // Preenche os campos com os dados do usuário
     document.getElementById('user_id').textContent = usuario.idusuario;
     document.getElementById('user-name').textContent = usuario.nome;
     document.getElementById('user-email').textContent = usuario.email;
 
-    // Define o ID global que os quizzes usarão
     idGlobalUsuario = usuario.idusuario;
 
-    // Buscar e exibir a dança escolhida ao carregar a página
     fetch(`/minhasDancas/${idGlobalUsuario}`)
         .then(response => {
             if (!response.ok) throw new Error('Falha ao buscar danças');
@@ -48,12 +45,10 @@ function logout() {
     window.location.href = '/login.html';
 }
 
-// Elemento principal onde o conteúdo dos jogos é carregado
 const quizContainer = document.getElementById("questoes");
 
 // Volta ao menu principal de jogos
 function jogarOsjogos() {
-    // Verifica se o container 'questoes' existe antes de modificar
     const quizContainer = document.getElementById("questoes");
     if(quizContainer) {
         quizContainer.innerHTML = `
@@ -115,7 +110,7 @@ function iniciarQuizDanca() {
     const currentQuestion = quizDancaData[contagemPerguntas];
     const quizContainer = document.getElementById("questoes");
 
-    // Cria o HTML para a primeira pergunta
+    
     quizContainer.innerHTML = `
     <div class="mainQuiz">
         <div id="quizForm" class="formQuiz">
@@ -165,13 +160,12 @@ function selectAnswerDanca(event) {
     contagemPerguntas++;
 
     if (contagemPerguntas < quizDancaData.length) {
-        loadNextDancaQuestion(); // Próxima pergunta
+        loadNextDancaQuestion(); 
     } else {
-        mostrarResultadoDanca(); // Fim do quiz
+        mostrarResultadoDanca(); 
     }
 }
 
-// Salvamento automático
 function salvarDancaAutomatica(danca) {
     if (!idGlobalUsuario) {
         console.error("ID do usuário (idGlobalUsuario) não encontrado. Não é possível salvar.");
@@ -185,9 +179,8 @@ function salvarDancaAutomatica(danca) {
     })
     .then(response => response.text())
     .then(data => {
-        console.log(data); // "Dança salva com sucesso!"
-        
-        // Atualiza o sidebar
+        console.log(data); 
+      
         fetch(`/minhasDancas/${idGlobalUsuario}`)
         .then(response => response.json())
         .then(dancas => {
@@ -232,7 +225,6 @@ function mostrarResultadoDanca() {
     salvarDancaAutomatica(info.nome);
 }
 
-// Função de contagem (helper)
 function palavraQueMaisRepete(dancas) {
     const contarPalavras = {};
     let maisRepetidas = ""; 

@@ -10,11 +10,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/js', express.static(path.join(__dirname, 'js')));
 app.use('/css', express.static(path.join(__dirname, 'css')));
 
-// Servir arquivos estáticos (HTML, CSS, JS)
 
-
-
-// Configuração do middleware
 app.use(cors()); // Habilita CORS
 app.use(express.json()); // Habilita parsing JSON
 
@@ -86,22 +82,15 @@ app.post('/login', (req, res) => {
 
   // ROTA NOVA para salvar o quiz completo de uma vez
 app.post("/salvar-quiz-completo", (req, res) => {
-    // Agora, 'req.body' é um ARRAY de resultados: [ {...}, {...}, ... ]
     const resultados = req.body; 
 
     if (!resultados || !Array.isArray(resultados) || resultados.length === 0) {
         return res.status(400).send("Nenhum resultado para salvar.");
     }
-
-    // 1. Montar a query de Múltiplos Inserts
-    // Ex: INSERT INTO Respostas (...) VALUES (...), (...), (...)
     const query = `
         INSERT INTO Respostas (pergunta, resposta_correta, resposta_usuario, correta, tempo, fkusuario)
         VALUES ?
     `;
-
-    // 2. Formatar os dados para a query
-    // O 'mysql2' sabe transformar um array de arrays em múltiplos VALUES
     const values = resultados.map(r => [
         r.pergunta,
         r.resposta_correta,
@@ -180,11 +169,6 @@ app.get('/minhasDancas/:idusuario', (req, res) => {
     });
 });
 
-/**
- * 
- * abaixo jogo forca
- * 
- */
 
 
 
@@ -344,14 +328,11 @@ app.get("/respostas-usuario/:idusuario", (req, res) => {
 });
 
 
-
-
-
-
 // Inicia o servidor
 const PORT = 3010;
 app.listen(PORT, () => {
   console.log(`Servidor rodando na porta ${PORT}`);
+  console.log('Acesse em: http://localhost:' + PORT);
   console.log(`
 ╔═══╗ ♪   ╔═══╗ ♪   ╔═══╗ ♪   ╔═══╗ ♪
 ║███║ ♫   ║███║ ♫   ║███║ ♫   ║███║ ♫

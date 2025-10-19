@@ -11,13 +11,13 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
     #questoes {
-        display: flex; /* Ativa o layout lado-a-lado */
-        justify-content: space-around; /* Espaça eles igualmente */
-        flex-wrap: wrap; /* Joga para baixo se a tela for pequena */
+        display: flex; 
+        justify-content: space-around; 
+        flex-wrap: wrap; 
         width: 100%;
     }
 
-    #dashboard { /* Container da Esquerda (Pessoal) */
+    #dashboard {
         background-color: #fff;
         padding: 20px;
         border-radius: 10px;
@@ -25,28 +25,25 @@
         text-align: center;
         margin: 10px;
 
-        /* --- MÁGICA DO LAYOUT --- */
-        width: 48%; /* Tenta ocupar 48% da tela */
-        min-width: 400px; /* Largura mínima. Se a tela for pequena demais, o flex-wrap joga para baixo */
-        box-sizing: border-box; /* Garante que o padding não atrapalhe a largura */
-    }
-
-
-    #dashboard2 { /* Container da Direita (Global) */
-        background-color: #fff;
-        padding: 20px;
-        border-radius: 10px;
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        text-align: center;
-        margin: 10px;
-
-        /* --- MÁGICA DO LAYOUT --- */
-        width: 48%; /* Tenta ocupar 48% da tela */
-        min-width: 400px; /* Largura mínima. */
+        width: 48%;
+        min-width: 400px; 
         box-sizing: border-box; 
     }
 
-    /* Estilo do canvas não muda */
+
+    #dashboard2 { 
+        background-color: #fff;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        text-align: center;
+        margin: 10px;
+
+        width: 48%; 
+        min-width: 400px; 
+        box-sizing: border-box; 
+    }
+
     canvas {
         margin: 20px auto;
         font-family: Arial, sans-serif;
@@ -56,12 +53,11 @@
         max-width: 100%;
     }
 
-    /* Adicione este código no final do seu <style> */
-/* Substitua o CSS de .chart-container, .custom-legend, etc. por isto */
+
 
 .chart-container {
     width: 100%;
-    margin-bottom: 25px; /* Espaço entre as duas listas */
+    margin-bottom: 25px; 
 }
 
 .chart-container h3 {
@@ -69,28 +65,27 @@
     color: #444;
     margin-bottom: 15px;
     padding-bottom: 5px;
-    border-bottom: 1px solid #eee; /* Linha sutil de separação */
+    border-bottom: 1px solid #eee; 
 }
 
-/* Estilo para a nova lista */
 .custom-legend ol {
-    list-style: none; /* Remove o 1. 2. 3. padrão */
+    list-style: none; 
     padding-left: 5px;
-    counter-reset: list-counter; /* Cria nosso próprio contador */
+    counter-reset: list-counter; 
 }
 
 .custom-legend li {
-    counter-increment: list-counter; /* Conta +1 para cada <li> */
+    counter-increment: list-counter; 
     font-size: 0.95rem;
-    line-height: 1.5; /* Mais espaço entre as linhas de texto */
-    margin-bottom: 15px; /* Espaço entre os itens da lista */
-    padding-left: 35px; /* Espaço para o nosso número customizado */
+    line-height: 1.5;
+    margin-bottom: 15px; 
+    padding-left: 35px; 
     position: relative;
 }
 
-/* O círculo com o número */
+
 .custom-legend li::before {
-    content: counter(list-counter); /* Mostra o número do contador */
+    content: counter(list-counter); 
     position: absolute;
     left: 0;
     top: 0;
@@ -107,11 +102,11 @@
 
 /* Cor dos números */
 #correct-legend li::before {
-    background-color: #28a745; /* Verde */
+    background-color: #28a745; 
 }
 
 #incorrect-legend li::before {
-    background-color: #dc3545; /* Vermelho */
+    background-color: #dc3545; 
 }
 </style>
 </head>
@@ -194,16 +189,14 @@
 
 
     <script>
-        // Função de logout (definida uma vez)
+    
         function logout() {
             localStorage.removeItem('usuario');
             window.location.href = '/login.html';
         }
 
-        // --- BLOCO ÚNICO DE EXECUÇÃO ---
         document.addEventListener('DOMContentLoaded', () => {
 
-            // --- 1. AUTENTICAÇÃO E DADOS DO USUÁRIO ---
             const usuario = JSON.parse(localStorage.getItem('usuario'));
 
             if (!usuario) {
@@ -212,14 +205,12 @@
                 return; // Para a execução
             }
 
-            // Preenche os dados do usuário na tela
             document.getElementById('user_id').textContent = usuario.idusuario;
             document.getElementById('user-name').textContent = usuario.nome;
             document.getElementById('user-email').textContent = usuario.email;
 
             const idDoUsuario = usuario.idusuario;
 
-            // Buscar e exibir a dança escolhida
             fetch(`/minhasDancas/${idDoUsuario}`)
                 .then(response => response.json())
                 .then(dancas => {
@@ -234,7 +225,6 @@
                     console.error('Erro ao carregar as danças:', error);
                 });
 
-            // Código para salvar dança (caso exista o botão)
             const salvarDancaBtn = document.getElementById('salvarDancaBtn');
             if (salvarDancaBtn) {
                 salvarDancaBtn.addEventListener('click', function () {
@@ -255,7 +245,6 @@
                         alert(data); 
                         var botao = salvarDancaBtn
                         botao.hidden = true
-                        // Atualiza a dança exibida no dashboard
                         fetch(`/minhasDancas/${idDoUsuario}`)
                             .then(response => response.json())
                             .then(dancas => {
@@ -277,19 +266,17 @@
             }
 
 
-            // --- 2. GRÁFICOS PESSOAIS (SEU GRAFICO) ---
+            // GRÁFICOS PESSOAIS
             fetch(`http://localhost:3010/respostas-usuario/${idDoUsuario}`)
                 .then((response) => response.json())
                 .then((data) => {
                     
-                    // --- LINHA DE DEBUG ADICIONADA ---
                     console.log("DADOS DO USUÁRIO:", data);
 
-                    // --- TRATAMENTO DE GRÁFICO EM BRANCO ---
                     if (!data || data.length === 0) {
                         const dashboardPessoal = document.getElementById("dashboard");
                         dashboardPessoal.innerHTML = "<h1>SEU GRAFICO</h1><p>Você ainda não tem estatísticas. Jogue o quiz para ver seus dados aqui!</p>";
-                        return; // Para a execução deste fetch
+                        return; 
                     }
 
                     const correctIncorrectData = {
@@ -309,7 +296,6 @@
 
                     const averageTime = times.reduce((a, b) => a + b, 0) / times.length;
 
-                    // Gráfico de Pizza: Corretas vs Incorretas (Pessoal)
                     new Chart(document.getElementById("correctIncorrectChart"), {
                         type: "pie",
                         data: {
@@ -332,7 +318,6 @@
                         }
                     });
 
-                    // Gráfico de Barras: Tempo Médio (Pessoal)
                     new Chart(document.getElementById("averageTimeChart"), {
                         type: "bar",
                         data: {
@@ -361,7 +346,7 @@
                 })
                 .catch((error) => console.error("Erro ao buscar dados do usuário:", error));
 
-// --- 3. GRÁFICOS GLOBAIS (Top 3 com Legenda Personalizada) ---// --- 3. GRÁFICOS GLOBAIS (Top 3 Apenas como Lista) ---
+//  GRÁFICOS GLOBAIS 
             fetch("http://localhost:3010/respostas-usuarios")
                 .then((response) => response.json())
                 .then((data) => {
@@ -386,7 +371,7 @@
                         }
                     });
 
-                    // --- 1. PEGAR O TOP 3 ---
+        
                     const top3Correct = Object.entries(questionStats)
                         .sort((a, b) => b[1].correct - a[1].correct)
                         .slice(0, 3);
@@ -395,13 +380,11 @@
                         .sort((a, b) => b[1].incorrect - a[1].incorrect)
                         .slice(0, 3);
 
-                    // --- 2. ESCONDER OS GRÁFICOS (NÃO PRECISAMOS DELES) ---
                     document.getElementById("mostCorrectChart").style.display = 'none';
                     document.getElementById("mostIncorrectChart").style.display = 'none';
 
-                    // --- 3. CRIAR A LISTA 1 (Acertos) ---
                     const correctLegend = document.getElementById("correct-legend");
-                    let correctLegendHTML = '<ol>'; // Criar uma lista ordenada
+                    let correctLegendHTML = '<ol>'; 
                     top3Correct.forEach((item, index) => {
                         correctLegendHTML += `
                             <li>
@@ -412,9 +395,8 @@
                     correctLegend.innerHTML = correctLegendHTML;
 
 
-                    // --- 4. CRIAR A LISTA 2 (Erros) ---
                     const incorrectLegend = document.getElementById("incorrect-legend");
-                    let incorrectLegendHTML = '<ol>'; // Criar uma lista ordenada
+                    let incorrectLegendHTML = '<ol>'; 
                     top3Incorrect.forEach((item, index) => {
                         incorrectLegendHTML += `
                             <li>
@@ -426,7 +408,7 @@
 
                 })
                 .catch((error) => console.error("Erro ao buscar dados gerais:", error));
-        }); // Fim do DOMContentLoaded
+        }); 
     </script>
 </body>
 
