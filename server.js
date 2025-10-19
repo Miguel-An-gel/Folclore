@@ -84,6 +84,46 @@ app.post('/login', (req, res) => {
   });
 
 
+  // ROTA NOVA para salvar o quiz completo de uma vez
+app.post("/salvar-quiz-completo", (req, res) => {
+    // Agora, 'req.body' é um ARRAY de resultados: [ {...}, {...}, ... ]
+    const resultados = req.body; 
+
+    if (!resultados || !Array.isArray(resultados) || resultados.length === 0) {
+        return res.status(400).send("Nenhum resultado para salvar.");
+    }
+
+    // 1. Montar a query de Múltiplos Inserts
+    // Ex: INSERT INTO Respostas (...) VALUES (...), (...), (...)
+    const query = `
+        INSERT INTO Respostas (pergunta, resposta_correta, resposta_usuario, correta, tempo, fkusuario)
+        VALUES ?
+    `;
+
+    // 2. Formatar os dados para a query
+    // O 'mysql2' sabe transformar um array de arrays em múltiplos VALUES
+    const values = resultados.map(r => [
+        r.pergunta,
+        r.resposta_correta,
+        r.resposta_usuario,
+        r.correta,
+        r.tempo,
+        r.fkusuario
+    ]);
+
+    // 3. Executar a query
+    db.query(query, [values], (err, result) => {
+        if (err) {
+            console.error("Erro ao inserir múltiplos dados:", err);
+            res.status(500).send("Erro ao salvar dados.");
+        } else {
+            console.log("Número de registros inseridos: " + result.affectedRows);
+            res.status(200).send("Dados do quiz salvos com sucesso.");
+        }
+    });
+});
+
+
 
 // Rota para salvar a dança escolhida
 app.post('/salvarDanca', (req, res) => {
@@ -123,9 +163,12 @@ app.get('/minhasDancas/:idusuario', (req, res) => {
     const { idusuario } = req.params;
 
     const sql = `
-        SELECT minhadanca.nomedanca
+        SELECT nomedanca
         FROM minhadanca
-        WHERE minhadanca.fkusuario = ?`;
+        WHERE fkusuario = ?
+        ORDER BY idminhadanca DESC
+        LIMIT 1
+        `;
 
     db.query(sql, [idusuario], (err, results) => {
         if (err) {
@@ -265,36 +308,40 @@ app.get("/respostas-usuarios", (req, res) => {
 
 
 
+// SUBSTITUA PELA ROTA NOVA:
+app.get("/respostas-usuario/:idusuario", (req, res) => {
+    
+    // Pega o ID que veio na URL
+    const { idusuario } = req.params; 
 
-app.get("/respostas-usuario", (req, res) => {
-   
     const query = `
         SELECT 
-          usuario.nome AS usuario,
-          usuario.email AS email,
-          Respostas.pergunta AS pergunta,
-          Respostas.resposta_correta AS resposta_correta,
-          Respostas.resposta_usuario AS resposta_usuario,
-          Respostas.correta AS acertou,
-          Respostas.tempo AS tempo_resposta
+            usuario.nome AS usuario,
+            usuario.email AS email,
+            Respostas.pergunta AS pergunta,
+            Respostas.resposta_correta AS resposta_correta,
+            Respostas.resposta_usuario AS resposta_usuario,
+            Respostas.correta AS acertou,
+            Respostas.tempo AS tempo_resposta
         FROM 
-          usuario
+            usuario
         JOIN 
-          Respostas ON usuario.idusuario = Respostas.fkusuario
+            Respostas ON usuario.idusuario = Respostas.fkusuario
         WHERE 
-          Respostas.fkusuario = 6;
+            Respostas.fkusuario = ?; /* <-- Usa o ID dinâmico */
     `;
-     
-    db.query(query, (err, results) => {
+      
+    // Passa o ID dinâmico para a query
+    db.query(query, [idusuario], (err, results) => {
         if (err) {
             console.error("Erro ao buscar respostas dos usuários:", err);
             res.status(500).send("Erro ao buscar dados.");
         } else {
-            console.log("Resultados da consulta:", results); // Loga os dados
+            console.log(`Resultados da consulta para o usuário ${idusuario}:`, results); 
             res.json(results);
         }
     });
-  });
+});
 
 
 
