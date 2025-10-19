@@ -17,7 +17,6 @@ Siga estes passos para configurar e executar o projeto em sua máquina local.
 1. Clonar o Repositório
 Abra seu terminal(usando o 'git Bach'), navegue até o diretório onde deseja salvar o projeto e execute o seguinte comando:
 
-
 git clone https://github.com/Miguel-An-gel/Folclore.git
 
 Depois, entre na pasta do projeto:
@@ -28,7 +27,8 @@ cd Folclore
 2. Instalar as Dependências do Backend
 O backend (servidor) é feito em Node.js e precisa de alguns pacotes (como express e mysql2). Para instalá-los, execute:
 
-usando o 'git Bach'
+usando o 'git Bach':
+
 npm install
 
 
@@ -42,7 +42,8 @@ o script 'moveOn.sql' execute o script todo e pronto, ja esta configurado para o
 4. Iniciar o Servidor
 Agora dentro do projeto, podemos iniciar ele utilizando o comando:
 
-usando o 'git Bach'
+usando o 'git Bach':
+
 npm start
 
 5. Acessar o Projeto
