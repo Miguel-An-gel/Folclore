@@ -25,14 +25,14 @@ Depois, entre na pasta do projeto:
 
 Usando o Git Bash
 
-cd Folclore
+```cd Folclore```
 
 2. Instalar as Dependências do Backend
 O backend é feito em Node.js e precisa de pacotes (como express e mysql2). Para instalá-los, execute no seu terminal:
 
 Usando o Git Bash
 
-npm install
+```npm install```
 
 3. Configurar o Banco de Dados (MySQL)
 Este é o passo mais importante. O projeto inclui um script SQL que cria automaticamente o banco de dados, as tabelas e o usuário necessários.
@@ -52,7 +52,7 @@ Com o banco de dados configurado e as dependências instaladas, inicie o servido
 
 Usando o Git Bash
 
-npm start
+```npm start```
 
 Se tudo der certo, você verá uma mensagem no terminal confirmando que o servidor está rodando na porta 3010.
 
