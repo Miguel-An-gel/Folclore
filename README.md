@@ -50,7 +50,7 @@ Isso criará o banco de dados dancacomcores e o usuário danca (senha stepup), q
 4. Iniciar o Servidor
 Com o banco de dados configurado e as dependências instaladas, inicie o servidor. No seu terminal, dentro da pasta do projeto, execute:
 
-Bash
+Usando o Git Bash
 
 npm start
 
